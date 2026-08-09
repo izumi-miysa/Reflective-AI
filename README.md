@@ -64,6 +64,8 @@ Reflective AI 制作用の主要ファイルは、まずここから辿れます
   動くWebプロトタイプ（エクスプレッシブ・ライティング → リフレクト一度 → ステージ）。詳細は `web/README.md`。
 - `docs/demo-survey.md`  
   デモ感想用 Googleフォームの設問案と、ログイン不要の設定手順。
+- `docs/git-setup.md`  
+  Git の名前・メール設定のコツ（このPCで一度だけ）。
 - `docs/file-index.md`  
   このプロジェクトの目次。スライド、モックアップ、発表原稿、ログの場所をまとめています。
 - `docs/presentation-script-4min.md`  

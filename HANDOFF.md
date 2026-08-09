@@ -46,6 +46,7 @@
 | `web/` | 動くプロトタイプ（本番に近い体験） |
 | `web/README.md` | 起動・Claude接続・Vercel |
 | `docs/demo-survey.md` | Googleフォーム設問・ログイン不要設定 |
+| `docs/git-setup.md` | Git の名前・メール設定（このPCで一度だけ） |
 | `Logs/Discussion-2026-08-08.md` | 境界線・3人・エクスプレッシブ・ライティング |
 | `mockups/` / `slides/` | 発表・説明用の静的資料 |
 | `.env.local`（`web/`内・Git対象外） | 秘密情報。GitHubに上げない |

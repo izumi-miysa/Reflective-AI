@@ -6,8 +6,14 @@ Reflective AI 制作用ファイルを探すための目次です。
 
 - `README.md`  
   プロジェクトの理念、ミッション、主要ファイルへの入口。
+- `HANDOFF.md`  
+  次のチャット・別日作業への引継ぎメモ。
 - `docs/file-index.md`  
   このファイル。どこに何があるかを確認するための目次。
+- `docs/git-setup.md`  
+  Git の名前・メール設定のコツ（このPCで一度だけ）。
+- `docs/demo-survey.md`  
+  デモ感想用 Googleフォームの設問案。
 
 ## 発表資料
 
