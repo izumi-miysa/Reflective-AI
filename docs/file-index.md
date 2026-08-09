@@ -1,0 +1,58 @@
+# Reflective AI File Index
+
+Reflective AI 制作用ファイルを探すための目次です。
+
+## まず開くファイル
+
+- `README.md`  
+  プロジェクトの理念、ミッション、主要ファイルへの入口。
+- `docs/file-index.md`  
+  このファイル。どこに何があるかを確認するための目次。
+
+## 発表資料
+
+- `slides/reflective-ai-for-work-slides.html`  
+  発表用HTMLスライド。Reflective AI for Work の概要、入口設計、相手役、言いっぱなし設計、収益モデルを含みます。
+- `docs/presentation-script-4min.md`  
+  4分発表用の読み上げ原稿。表示するスライド番号とモックアップURLも含みます。
+- `docs/graduation-presentation-outline.md`  
+  卒業制作発表の構成案。スライド化前の下書きです。
+
+## モックアップ
+
+- `mockups/reflective-ai-for-work.html`  
+  全体説明用モックアップ。Reflective 4Pane、入口設計、残さない安心、B2B2C の見せ方を確認できます。
+- `mockups/reflective-ai-experience-demo.html`  
+  体験デモ用モックアップ。「誰の顔が浮かびますか？」から始まる会話デモです。
+
+## 理念・背景
+
+- `Vision.md（Version 1.0）`  
+  Reflective AI のビジョン文書。
+- `Founder.md`  
+  Founder の背景や原体験。
+- `Logs/Discussion-2026-08-06.md`  
+  依存、映画館の隣の人、壁打ち、汎用AIとの差分、オープンダイアローグに関するログ。
+- `Logs/Discussion-2026-08-06-2.md`  
+  危険信号、自傷・希死念慮への例外対応、安全設計に関するログ。
+- `Logs/Discussion-2026-08-06-4.md`  
+  「誰と話したいか」から始める入口設計、言わないと決めたことを言葉にする効能に関するログ。
+- `Logs/Discussion-2026-08-06-5.md`  
+  「言いっぱなし / 残さない」設計、B2B2C、会場限定版、法人版に関するログ。
+
+## ローカルで開くURL
+
+ローカルサーバーが `http://127.0.0.1:8765` で起動しているときに使えます。
+
+- スライド: `http://127.0.0.1:8765/slides/reflective-ai-for-work-slides.html`
+- 全体説明用モックアップ: `http://127.0.0.1:8765/mockups/reflective-ai-for-work.html`
+- 体験デモ用モックアップ: `http://127.0.0.1:8765/mockups/reflective-ai-experience-demo.html`
+- 発表原稿: `http://127.0.0.1:8765/docs/presentation-script-4min.md`
+
+## 更新時の目安
+
+- 発表内容を変える: `slides/reflective-ai-for-work-slides.html` と `docs/presentation-script-4min.md`
+- 体験の見せ方を変える: `mockups/reflective-ai-experience-demo.html`
+- 企画の全体像を変える: `mockups/reflective-ai-for-work.html`
+- 理念や背景を確認する: `README.md`、`Vision.md（Version 1.0）`、`Founder.md`
+- 議論の根拠を確認する: `Logs/`

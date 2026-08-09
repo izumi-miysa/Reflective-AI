@@ -1,0 +1,12 @@
+# Reflective AI
+
+## Ignore
+node_modules/
+.next/
+.vercel/
+.env*
+!.env.local.example
+*.pem
+.DS_Store
+~$*
+*.xps

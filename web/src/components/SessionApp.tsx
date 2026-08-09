@@ -1,0 +1,544 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import type { ChatMessage, Phase } from "@/lib/types";
+
+function uid() {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+/** ステージでこの往復数に達したら、振り返りを提案する */
+const STAGE_EXCHANGES_BEFORE_OFFER = 4;
+/** 無操作が続いたら振り返りを提案する（ミリ秒） */
+const STAGE_SILENCE_MS = 45_000;
+
+export function SessionApp() {
+  const [phase, setPhase] = useState<Phase>("writing");
+  const [writing, setWriting] = useState("");
+  const [draft, setDraft] = useState("");
+  const [personLabel, setPersonLabel] = useState<string | null>(null);
+  const [reflectorMessages, setReflectorMessages] = useState<ChatMessage[]>(
+    [],
+  );
+  const [stageMessages, setStageMessages] = useState<ChatMessage[]>([]);
+  const [reflectRound, setReflectRound] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [providerLabel, setProviderLabel] = useState("確認中…");
+  const [stageExchanges, setStageExchanges] = useState(0);
+  const [showPauseOffer, setShowPauseOffer] = useState(false);
+  const [pauseOfferDismissed, setPauseOfferDismissed] = useState(false);
+
+  const stageEndRef = useRef<HTMLDivElement>(null);
+  const reflectEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    void fetch("/api/ai-status")
+      .then((res) => res.json())
+      .then((data: { provider: string; model: string | null }) => {
+        if (data.provider === "anthropic") {
+          setProviderLabel(
+            data.model ? `Claude（${data.model}）` : "Claude",
+          );
+        } else {
+          setProviderLabel("mock");
+        }
+      })
+      .catch(() => setProviderLabel("不明"));
+  }, []);
+
+  useEffect(() => {
+    stageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [stageMessages, phase]);
+
+  useEffect(() => {
+    reflectEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [reflectorMessages]);
+
+  // 4往復に達したら提案（断り済みなら出さない）
+  useEffect(() => {
+    if (
+      phase === "stage" &&
+      stageExchanges >= STAGE_EXCHANGES_BEFORE_OFFER &&
+      !pauseOfferDismissed
+    ) {
+      setShowPauseOffer(true);
+    }
+  }, [phase, stageExchanges, pauseOfferDismissed]);
+
+  // 沈黙が続いたら提案（入力中・応答待ち中はリセット）
+  useEffect(() => {
+    if (phase !== "stage" || busy || showPauseOffer) return;
+
+    const timer = window.setTimeout(() => {
+      setShowPauseOffer(true);
+    }, STAGE_SILENCE_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [phase, busy, draft, stageMessages, showPauseOffer]);
+
+  async function submitWriting() {
+    const text = writing.trim();
+    if (!text || busy) return;
+
+    setBusy(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/reflect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          writing: text,
+          stageMessages: [],
+          personLabel: null,
+          reflectRound: 0,
+        }),
+      });
+
+      if (!res.ok) throw new Error("reflect failed");
+      const data = await res.json();
+
+      setPersonLabel(data.personLabel);
+      setReflectRound(1);
+      setReflectorMessages([
+        {
+          id: uid(),
+          speaker: "reflector",
+          text: data.message,
+          at: Date.now(),
+        },
+      ]);
+      setPhase("reflecting");
+    } catch {
+      setError("リフレクトに失敗しました。もう一度試してください。");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function openStage() {
+    if (!personLabel || busy) return;
+    setPhase("stage");
+    setError(null);
+    setStageExchanges(0);
+    setShowPauseOffer(false);
+    setPauseOfferDismissed(false);
+
+    if (stageMessages.length === 0) {
+      setStageMessages([
+        {
+          id: uid(),
+          speaker: "system",
+          text: `${personLabel}の発言は、AIが視点を推測して声を代わりに担っています。実際のその人ではありません。あなたから話しかけてみてください。`,
+          at: Date.now(),
+        },
+      ]);
+    }
+  }
+
+  async function sendStageMessage() {
+    const text = draft.trim();
+    if (!text || !personLabel || busy || phase !== "stage") return;
+
+    const nextUser: ChatMessage = {
+      id: uid(),
+      speaker: "user",
+      text,
+      at: Date.now(),
+    };
+
+    const historyForApi = [...stageMessages, nextUser]
+      .filter((m) => m.speaker === "user" || m.speaker === "counterpart")
+      .map((m) => ({
+        speaker: m.speaker as "user" | "counterpart",
+        text: m.text,
+      }));
+
+    setStageMessages((prev) => [...prev, nextUser]);
+    setDraft("");
+    setBusy(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/stage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          writing,
+          personLabel,
+          stageMessages: historyForApi.slice(0, -1),
+          userMessage: text,
+        }),
+      });
+
+      if (!res.ok) throw new Error("stage failed");
+      const data = await res.json();
+
+      setStageMessages((prev) => [
+        ...prev,
+        {
+          id: uid(),
+          speaker: "counterpart",
+          text: data.message,
+          at: Date.now(),
+        },
+      ]);
+      setStageExchanges((n) => n + 1);
+    } catch {
+      setError("相手役の応答に失敗しました。");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function dismissPauseOffer() {
+    setShowPauseOffer(false);
+    setPauseOfferDismissed(true);
+  }
+
+  async function closeStage() {
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    setShowPauseOffer(false);
+
+    try {
+      const stageForApi = stageMessages
+        .filter((m) => m.speaker === "user" || m.speaker === "counterpart")
+        .map((m) => ({
+          speaker: m.speaker as "user" | "counterpart",
+          text: m.text,
+        }));
+
+      const res = await fetch("/api/reflect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          writing,
+          stageMessages: stageForApi,
+          personLabel,
+          reflectRound,
+        }),
+      });
+
+      if (!res.ok) throw new Error("reflect failed");
+      const data = await res.json();
+
+      setPersonLabel(data.personLabel);
+      setReflectRound((n) => n + 1);
+      setReflectorMessages((prev) => [
+        ...prev,
+        {
+          id: uid(),
+          speaker: "reflector",
+          text: data.message,
+          at: Date.now(),
+        },
+      ]);
+      setPhase("reflecting");
+      setStageExchanges(0);
+      setPauseOfferDismissed(false);
+    } catch {
+      setError("リフレクトに失敗しました。");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function endSession() {
+    setPhase("done");
+  }
+
+  function resetSession() {
+    setPhase("writing");
+    setWriting("");
+    setDraft("");
+    setPersonLabel(null);
+    setReflectorMessages([]);
+    setStageMessages([]);
+    setReflectRound(0);
+    setStageExchanges(0);
+    setShowPauseOffer(false);
+    setPauseOfferDismissed(false);
+    setBusy(false);
+    setError(null);
+  }
+
+  return (
+    <div className="shell">
+      <header className="top">
+        <div>
+          <p className="brand">Reflective AI</p>
+          <p className="tagline">話す前に、少し書く。</p>
+        </div>
+        <span className={`phase-pill phase-${phase}`}>
+          {phaseLabel(phase, personLabel)}
+        </span>
+      </header>
+
+      <p className="promise">
+        答えは返しません。会話が終われば、私たちのもとにも残りません。
+      </p>
+
+      {phase === "writing" && (
+        <section className="panel writing-panel">
+          <h1>今、心にあることを、少し書いてみませんか</h1>
+          <p className="hint">
+            書いているあいだ、AIは何も言いません。誰にも読まれない前提で、遮られず書いてください。
+          </p>
+          <textarea
+            className="writing-area"
+            value={writing}
+            onChange={(e) => setWriting(e.target.value)}
+            placeholder="浮かんだこと、言えなかったこと、ぼんやりした気持ち…"
+            rows={12}
+            disabled={busy}
+          />
+          <div className="actions">
+            <button
+              type="button"
+              className="btn primary"
+              disabled={!writing.trim() || busy}
+              onClick={submitWriting}
+            >
+              {busy ? "聞いています…" : "書き終えた"}
+            </button>
+          </div>
+        </section>
+      )}
+
+      {(phase === "reflecting" || phase === "stage") && (
+        <div className="workspace">
+          <section className="panel reflector-panel">
+            <div className="panel-head">
+              <span className="avatar reflector">R</span>
+              <div>
+                <strong>Reflective AI</strong>
+                <span>俯瞰するリフレクター（一度だけ話します）</span>
+              </div>
+            </div>
+            <div className="reflect-log">
+              {reflectorMessages.map((m) => (
+                <article key={m.id} className="reflect-bubble">
+                  {m.text.split("\n").map((line, index) => (
+                    <p key={`${m.id}-${index}`}>{line}</p>
+                  ))}
+                </article>
+              ))}
+              <div ref={reflectEndRef} />
+            </div>
+
+            {phase === "reflecting" && (
+              <>
+                <p className="end-hint">
+                  {reflectRound > 1
+                    ? "続きが必要なら、もう一度声をかけてみてください。終わってもよいと感じたら、ここで閉じて大丈夫です。この会話は保存されません。"
+                    : "今は話さなくても大丈夫です。終わってもよいと感じたら、ここで閉じてください。この会話は保存されません。"}
+                </p>
+                <div className="actions">
+                  <button
+                    type="button"
+                    className="btn primary"
+                    disabled={busy}
+                    onClick={openStage}
+                  >
+                    {personLabel
+                      ? `${personLabel}に、少し声をかけてみますか`
+                      : "少し、声をかけてみますか"}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn ghost"
+                    disabled={busy}
+                    onClick={endSession}
+                  >
+                    手放して、閉じる
+                  </button>
+                </div>
+              </>
+            )}
+
+            {phase === "stage" && !showPauseOffer && (
+              <p className="boundary-note">
+                ステージが開いているあいだ、Reflective AIは発言しません。
+                およそ4往復、またはしばらく沈黙が続いたタイミングで、振り返りの提案が出ます。
+              </p>
+            )}
+
+            {phase === "stage" && showPauseOffer && (
+              <div className="pause-offer">
+                <p className="pause-offer-title">ここで一度振り返ってみましょう</p>
+                <p className="pause-offer-body">
+                  ステージをいったん閉じると、Reflective
+                  AIが外側から一度だけ話します。セッション自体はまだ終わりません。続けることもできます。
+                </p>
+                <div className="actions">
+                  <button
+                    type="button"
+                    className="btn primary compact"
+                    disabled={busy}
+                    onClick={closeStage}
+                  >
+                    振り返る
+                  </button>
+                  <button
+                    type="button"
+                    className="btn ghost compact"
+                    disabled={busy}
+                    onClick={dismissPauseOffer}
+                  >
+                    もう少し話す
+                  </button>
+                </div>
+              </div>
+            )}
+          </section>
+
+          <section
+            className={`panel stage-panel ${phase === "stage" ? "open" : "dimmed"}`}
+          >
+            <div className="panel-head">
+              <div>
+                <strong>ステージ</strong>
+                <span>
+                  {personLabel ?? "相手役"}（左）── 自分（右）
+                </span>
+              </div>
+              {phase === "stage" && (
+                <button
+                  type="button"
+                  className="btn ghost compact"
+                  disabled={busy}
+                  onClick={closeStage}
+                >
+                  ステージを閉じる
+                </button>
+              )}
+            </div>
+
+            <div className="stage-log">
+              {phase !== "stage" && stageMessages.length === 0 && (
+                <p className="empty-stage">
+                  ステージはまだ閉じています。リフレクターの提案のあと、必要なときだけ開きます。
+                </p>
+              )}
+              {phase === "stage" &&
+                stageMessages.every((m) => m.speaker === "system") && (
+                  <p className="empty-stage">
+                    あなたから話しかけてください。相手役は、そのあとに応じます。
+                  </p>
+                )}
+              {stageMessages.map((m) => {
+                if (m.speaker === "system") {
+                  return (
+                    <p key={m.id} className="stage-system">
+                      {m.text}
+                    </p>
+                  );
+                }
+                const side = m.speaker === "user" ? "right" : "left";
+                const who =
+                  m.speaker === "user"
+                    ? "自分"
+                    : personLabel
+                      ? `相手役：${personLabel}`
+                      : "相手役";
+                return (
+                  <div key={m.id} className={`stage-row ${side}`}>
+                    <div className="stage-meta">{who}</div>
+                    <div
+                      className={`stage-bubble ${m.speaker === "counterpart" ? "counterpart" : "user"}`}
+                    >
+                      {m.text}
+                    </div>
+                  </div>
+                );
+              })}
+              <div ref={stageEndRef} />
+            </div>
+
+            {phase === "stage" && (
+              <div className="stage-input">
+                <input
+                  type="text"
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  placeholder={
+                    personLabel
+                      ? `${personLabel}に、あなたから話しかけてみましょう…`
+                      : "あなたから話しかけてみましょう…"
+                  }
+                  disabled={busy}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      void sendStageMessage();
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  className="btn primary compact"
+                  disabled={!draft.trim() || busy}
+                  onClick={sendStageMessage}
+                >
+                  送る
+                </button>
+              </div>
+            )}
+          </section>
+        </div>
+      )}
+
+      {phase === "done" && (
+        <section className="panel done-panel">
+          <h1>この会話は、ここで終わります</h1>
+          <p className="hint">
+            内容は保存されていません。話すことは、手放すことです。
+            ここで閉じても大丈夫です。
+          </p>
+          <div className="actions">
+            {process.env.NEXT_PUBLIC_SURVEY_URL ? (
+              <a
+                className="btn primary"
+                href={process.env.NEXT_PUBLIC_SURVEY_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                感想を送る（3分・ログイン不要）
+              </a>
+            ) : null}
+            <button type="button" className="btn ghost" onClick={resetSession}>
+              もう一度、書くところから
+            </button>
+          </div>
+        </section>
+      )}
+
+      {error && <p className="error">{error}</p>}
+
+      <footer className="foot">
+        <span>骨格プロトタイプ · AI: {providerLabel}</span>
+        {(phase === "reflecting" || phase === "stage") && (
+          <button type="button" className="linkish" onClick={resetSession}>
+            セッションを破棄
+          </button>
+        )}
+      </footer>
+    </div>
+  );
+}
+
+function phaseLabel(phase: Phase, personLabel: string | null) {
+  switch (phase) {
+    case "writing":
+      return "書く";
+    case "reflecting":
+      return "リフレクト";
+    case "stage":
+      return personLabel ? `ステージ · ${personLabel}` : "ステージ";
+    case "done":
+      return "終了";
+  }
+}
