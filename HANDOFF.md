@@ -55,17 +55,16 @@
 ## いまの状態（手で更新する）
 
 - ローカル: Next.js + Claude 接続できる状態まで実装済み
-- デモ改善: ①自分が先に話す ②伝える／伝えないを出さない ③ボタン文言 ④敬称の忠実さ ⑤終わり方
-- スマホ向けCSS・感想ボタン（`NEXT_PUBLIC_SURVEY_URL`）・Vercel手順あり
-- Git: user.name / user.email 設定済み（このPC）
-- 未: GitHub への push、Vercel デプロイ、GoogleフォームURLの接続
+- デモ改善: ①〜⑤済み
+- スマホ向けCSS・感想ボタン・Vercel手順・`HANDOFF.md` あり
+- Git: user.name / user.email 設定済み、**main に push 済み**（`web/` 含む）
+- 未: Vercel デプロイ、Googleフォーム作成と `NEXT_PUBLIC_SURVEY_URL` 接続
 
 ### 次にやること
 
-1. プロトタイプ一式を commit & push
-2. Vercel で Root Directory = `web` でデプロイ（GitHub Apps に Vercel あり）
-3. 環境変数: `AI_PROVIDER` / `ANTHROPIC_API_KEY` / `ANTHROPIC_MODEL` / `NEXT_PUBLIC_SURVEY_URL`
-4. Googleフォーム作成（`docs/demo-survey.md`、ログイン不要設定）
+1. Vercel で Root Directory = `web` でデプロイ（GitHub Apps に Vercel あり）
+2. 環境変数: `AI_PROVIDER` / `ANTHROPIC_API_KEY` / `ANTHROPIC_MODEL` / `NEXT_PUBLIC_SURVEY_URL`
+3. Googleフォーム作成（`docs/demo-survey.md`、ログイン不要設定）
 
 ---
 
