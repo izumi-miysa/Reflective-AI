@@ -467,6 +467,11 @@ textarea {
     border-radius: 18px;
   }
 
+  .writing-panel h1,
+  .done-panel h1 {
+    font-size: clamp(20px, 5.6vw, 26px);
+  }
+
   .writing-area {
     min-height: 220px;
     font-size: 16px; /* iOSの自動ズーム抑制 */
@@ -482,6 +487,10 @@ textarea {
 
   .actions .btn {
     width: 100%;
+    min-height: 48px;
+    padding: 12px 16px;
+    white-space: normal;
+    line-height: 1.35;
   }
 
   .reflect-log {
@@ -503,6 +512,14 @@ textarea {
     font-size: 12.5px;
   }
 
+  .pause-offer-title {
+    font-size: 15px;
+  }
+
+  .done-panel .hint {
+    font-size: 13px;
+  }
+
   .foot {
     flex-direction: column;
     align-items: flex-start;
@@ -516,6 +533,8 @@ textarea {
   }
 
   .phone-like-safe {
-    padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: max(28px, env(safe-area-inset-bottom));
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
   }
 }

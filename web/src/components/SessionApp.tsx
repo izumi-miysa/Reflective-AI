@@ -7,9 +7,9 @@ function uid() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-/** ステージでこの往復数に達したら、振り返りを提案する */
+/** ステージでこの往復数に達したら、話を聞く提案を出す */
 const STAGE_EXCHANGES_BEFORE_OFFER = 4;
-/** 無操作が続いたら振り返りを提案する（ミリ秒） */
+/** 無操作が続いたら話を聞く提案を出す（ミリ秒） */
 const STAGE_SILENCE_MS = 45_000;
 
 export function SessionApp() {
@@ -266,7 +266,7 @@ export function SessionApp() {
   }
 
   return (
-    <div className="shell">
+    <div className="shell phone-like-safe">
       <header className="top">
         <div>
           <p className="brand">Reflective AI</p>
@@ -302,7 +302,7 @@ export function SessionApp() {
               disabled={!writing.trim() || busy}
               onClick={submitWriting}
             >
-              {busy ? "聞いています…" : "書き終えた"}
+              {busy ? "聞いています…" : "書きました"}
             </button>
           </div>
         </section>
@@ -353,7 +353,7 @@ export function SessionApp() {
                     disabled={busy}
                     onClick={endSession}
                   >
-                    手放して、閉じる
+                    今日はここまでにする
                   </button>
                 </div>
               </>
@@ -362,13 +362,15 @@ export function SessionApp() {
             {phase === "stage" && !showPauseOffer && (
               <p className="boundary-note">
                 ステージが開いているあいだ、Reflective AIは発言しません。
-                およそ4往復、またはしばらく沈黙が続いたタイミングで、振り返りの提案が出ます。
+                およそ4往復、またはしばらく沈黙が続いたタイミングで、話を聞いてみる提案が出ます。
               </p>
             )}
 
             {phase === "stage" && showPauseOffer && (
               <div className="pause-offer">
-                <p className="pause-offer-title">ここで一度振り返ってみましょう</p>
+                <p className="pause-offer-title">
+                  ここで一度、話を聞いてみませんか
+                </p>
                 <p className="pause-offer-body">
                   ステージをいったん閉じると、Reflective
                   AIが外側から一度だけ話します。セッション自体はまだ終わりません。続けることもできます。
@@ -380,7 +382,7 @@ export function SessionApp() {
                     disabled={busy}
                     onClick={closeStage}
                   >
-                    振り返る
+                    聞いてみる
                   </button>
                   <button
                     type="button"

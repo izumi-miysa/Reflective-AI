@@ -59,13 +59,18 @@
 - デモ改善: ①〜⑤済み
 - スマホ向けCSS・感想ボタン・Vercel手順・`HANDOFF.md` あり
 - Git: user.name / user.email 設定済み、**main に push 済み**（`web/` 含む）
-- 未: Vercel デプロイ、Googleフォーム作成と `NEXT_PUBLIC_SURVEY_URL` 接続
+- Vercel: プロジェクト `reflective-ai` を Production デプロイ済み  
+  URL: https://reflective-ai-red.vercel.app  
+  環境変数: `AI_PROVIDER` / `ANTHROPIC_API_KEY` / `ANTHROPIC_MODEL` / `NEXT_PUBLIC_SURVEY_URL` 設定済み
+- Googleフォーム作成済み・アプリ終了画面から接続済み
+- UI文言（2026-08-11）: `書きました` / `話を聞いてみませんか`・`聞いてみる` / `今日はここまでにする`（終了画面の「手放す」は理念文として残す）
 
 ### 次にやること
 
-1. Vercel で Root Directory = `web` でデプロイ（GitHub Apps に Vercel あり）
-2. 環境変数: `AI_PROVIDER` / `ANTHROPIC_API_KEY` / `ANTHROPIC_MODEL` / `NEXT_PUBLIC_SURVEY_URL`
-3. Googleフォーム作成（`docs/demo-survey.md`、ログイン不要設定）
+1. Googleフォームの Q5/Q6 文言をアプリに合わせる（`docs/demo-survey.md` 参照）
+2. シークレットでフォームがログインなし送信できるか確認
+3. 本番URL（スマホ）で体験 → 終了 → 「感想を送る」まで通し確認
+4. 配布文（`docs/demo-survey.md`）に体験URL・感想URLを入れて送る
 
 ---
 
