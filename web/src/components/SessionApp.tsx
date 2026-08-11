@@ -266,27 +266,23 @@ export function SessionApp() {
   }
 
   return (
-    <div className="shell phone-like-safe">
+    <div
+      className={`shell phone-like-safe${phase === "stage" && showPauseOffer ? " has-pause-offer" : ""}`}
+    >
       <header className="top">
         <div>
           <p className="brand">Reflective AI</p>
-          <p className="tagline">話す前に、少し書く。</p>
         </div>
         <span className={`phase-pill phase-${phase}`}>
           {phaseLabel(phase, personLabel)}
         </span>
       </header>
 
-      <p className="promise">
-        答えは返しません。会話が終われば、私たちのもとにも残りません。
-      </p>
-
       {phase === "writing" && (
         <section className="panel writing-panel">
-          <h1>今、心にあることを、少し書いてみませんか</h1>
-          <p className="hint">
-            書いているあいだ、AIは何も言いません。誰にも読まれない前提で、遮られず書いてください。
-          </p>
+          <h1>
+            今、気になっていることを書いてみませんか。うまくまとめなくても大丈夫です。
+          </h1>
           <textarea
             className="writing-area"
             value={writing}
@@ -295,6 +291,9 @@ export function SessionApp() {
             rows={12}
             disabled={busy}
           />
+          <p className="writing-assurance">
+            判断やアドバイスはしません。書いたことは、ここには保存されません。
+          </p>
           <div className="actions">
             <button
               type="button"
@@ -311,9 +310,9 @@ export function SessionApp() {
       {(phase === "reflecting" || phase === "stage") && (
         <div className="workspace">
           <section className="panel reflector-panel">
-            <div className="panel-head">
+            <div className="panel-head reflector-head">
               <span className="avatar reflector">R</span>
-              <div>
+              <div className="panel-head-text">
                 <strong>Reflective AI</strong>
                 <span>俯瞰するリフレクター（一度だけ話します）</span>
               </div>
@@ -372,8 +371,8 @@ export function SessionApp() {
                   ここで一度、話を聞いてみませんか
                 </p>
                 <p className="pause-offer-body">
-                  ステージをいったん閉じると、Reflective
-                  AIが外側から一度だけ話します。セッション自体はまだ終わりません。続けることもできます。
+                  Reflective
+                  AIが外側から一度だけ話します。まだ終わりません。続けることもできます。
                 </p>
                 <div className="actions">
                   <button
@@ -400,11 +399,13 @@ export function SessionApp() {
           <section
             className={`panel stage-panel ${phase === "stage" ? "open" : "dimmed"}`}
           >
-            <div className="panel-head">
-              <div>
+            <div className="panel-head stage-head">
+              <div className="panel-head-text">
                 <strong>ステージ</strong>
-                <span>
-                  {personLabel ?? "相手役"}（左）── 自分（右）
+                <span className="stage-pair">
+                  <span>{personLabel ?? "相手役"}</span>
+                  <span className="stage-pair-line" aria-hidden="true" />
+                  <span>自分</span>
                 </span>
               </div>
               {phase === "stage" && (
@@ -414,7 +415,7 @@ export function SessionApp() {
                   disabled={busy}
                   onClick={closeStage}
                 >
-                  ステージを閉じる
+                  いったん閉じる
                 </button>
               )}
             </div>

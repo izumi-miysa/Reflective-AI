@@ -129,6 +129,17 @@ textarea {
   font-size: 14px;
 }
 
+.writing-assurance {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.writing-assurance + .actions {
+  margin-top: 12px;
+}
+
 .writing-area {
   width: 100%;
   min-height: 280px;
@@ -206,11 +217,20 @@ textarea {
   margin-bottom: 14px;
 }
 
-.panel-head > div:first-child,
-.reflector-panel .panel-head {
+.panel-head-text {
+  min-width: 0;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.reflector-head {
+  justify-content: flex-start;
   gap: 12px;
+}
+
+.stage-head .btn {
+  flex: 0 0 auto;
 }
 
 .panel-head strong {
@@ -219,9 +239,23 @@ textarea {
 }
 
 .panel-head span {
-  display: block;
   color: var(--muted);
   font-size: 12px;
+}
+
+.stage-pair {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.stage-pair-line {
+  display: inline-block;
+  width: 28px;
+  height: 1px;
+  background: #c9d3dd;
 }
 
 .avatar {
@@ -315,7 +349,7 @@ textarea {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   padding: 4px 2px 8px;
 }
 
@@ -324,7 +358,7 @@ textarea {
   text-align: center;
   color: var(--muted);
   font-size: 13px;
-  padding: 24px;
+  padding: 16px 12px;
 }
 
 .stage-system {
@@ -385,14 +419,18 @@ textarea {
 
 .stage-input {
   display: flex;
+  align-items: center;
   gap: 8px;
   margin-top: 12px;
   padding-top: 12px;
   border-top: 1px solid var(--line);
+  min-width: 0;
+  width: 100%;
 }
 
 .stage-input input {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 0;
   border: 1px solid var(--line);
   border-radius: 999px;
   padding: 11px 16px;
@@ -403,6 +441,12 @@ textarea {
 .stage-input input:focus {
   border-color: #8fbfa4;
   box-shadow: 0 0 0 4px rgba(47, 107, 79, 0.12);
+}
+
+.stage-input .btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  writing-mode: horizontal-tb;
 }
 
 .error {
@@ -434,6 +478,15 @@ textarea {
     width: min(100%, calc(100% - 20px));
     padding: 16px 0 28px;
     gap: 12px;
+    overflow-x: clip;
+  }
+
+  .shell.has-pause-offer {
+    padding-bottom: calc(132px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .phase-pill {
+    display: none; /* スマホでは状態ラベルがボタンに見えやすいので隠す */
   }
 
   .tagline {
@@ -452,10 +505,12 @@ textarea {
 
   .stage-panel {
     order: -1; /* スマホではステージを先に見せる */
+    min-width: 0;
   }
 
   .reflector-panel {
     order: 1;
+    min-width: 0;
   }
 
   .top {
@@ -465,6 +520,7 @@ textarea {
   .panel {
     padding: 16px;
     border-radius: 18px;
+    min-width: 0;
   }
 
   .writing-panel h1,
@@ -477,8 +533,18 @@ textarea {
     font-size: 16px; /* iOSの自動ズーム抑制 */
   }
 
+  .stage-head {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
   .stage-input input {
     font-size: 16px;
+  }
+
+  .stage-input .btn {
+    min-height: 44px;
+    padding: 10px 14px;
   }
 
   .actions {
@@ -498,8 +564,13 @@ textarea {
   }
 
   .stage-log {
-    max-height: min(42vh, 360px);
-    min-height: 200px;
+    max-height: min(38vh, 320px);
+    min-height: 120px;
+    gap: 6px;
+  }
+
+  .empty-stage {
+    padding: 12px 8px;
   }
 
   .stage-panel.open {
@@ -514,6 +585,27 @@ textarea {
 
   .pause-offer-title {
     font-size: 15px;
+  }
+
+  /* スマホでは「聞いてみる」を画面下部に固定して離脱を防ぐ */
+  .pause-offer {
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    z-index: 50;
+    margin: 0;
+    box-shadow: 0 10px 30px rgba(28, 36, 48, 0.18);
+  }
+
+  .pause-offer .actions {
+    flex-direction: row;
+  }
+
+  .pause-offer .actions .btn {
+    width: auto;
+    flex: 1;
+    min-height: 44px;
   }
 
   .done-panel .hint {
@@ -536,5 +628,9 @@ textarea {
     padding-bottom: max(28px, env(safe-area-inset-bottom));
     padding-left: max(0px, env(safe-area-inset-left));
     padding-right: max(0px, env(safe-area-inset-right));
+  }
+
+  .shell.has-pause-offer.phone-like-safe {
+    padding-bottom: calc(140px + env(safe-area-inset-bottom, 0px));
   }
 }

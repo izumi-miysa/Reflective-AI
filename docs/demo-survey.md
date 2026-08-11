@@ -37,7 +37,7 @@ NEXT_PUBLIC_SURVEY_URL=https://forms.gle/xxxxxxxx
 - よくなかった
 
 ### Q2. 入口（必須・ラジオ）
-「今、心にあることを、少し書いてみませんか」という声掛けは入りやすかったですか
+「今、気になっていることを書いてみませんか」という声掛けは入りやすかったですか
 
 - 入りやすかった
 - ふつう
@@ -86,8 +86,8 @@ Reflective AI の短いデモです。スマホで開けます。
 1. 下のURLで体験（3〜10分）
 2. 終わったら感想フォームへ（ログイン不要・3分）
 
-体験: （VercelのURL）
-感想: （GoogleフォームのURL）
+体験: https://reflective-ai-red.vercel.app
+感想: https://docs.google.com/forms/d/e/1FAIpQLScg8bV5K4G_tonalNqLDgk0nofT3fI31I_ZQxceUe3U9fY_mA/viewform
 
 ※ 書いた内容は保存されません。深い個人情報は書かないでください。
 ```

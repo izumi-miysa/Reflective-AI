@@ -56,21 +56,23 @@
 ## いまの状態（手で更新する）
 
 - ローカル: Next.js + Claude 接続できる状態まで実装済み
-- デモ改善: ①〜⑤済み
+- デモ公開済み・知人テスト開始
+- 導入文・スマホUI改善済み（書く画面の安心文言、pause-offer固定、横はみ出し抑制など）
 - スマホ向けCSS・感想ボタン・Vercel手順・`HANDOFF.md` あり
-- Git: user.name / user.email 設定済み、**main に push 済み**（`web/` 含む）
+- Git: user.name / user.email 設定済み（`web/` 含む）
 - Vercel: プロジェクト `reflective-ai` を Production デプロイ済み  
   URL: https://reflective-ai-red.vercel.app  
   環境変数: `AI_PROVIDER` / `ANTHROPIC_API_KEY` / `ANTHROPIC_MODEL` / `NEXT_PUBLIC_SURVEY_URL` 設定済み
 - Googleフォーム作成済み・アプリ終了画面から接続済み
-- UI文言（2026-08-11）: `書きました` / `話を聞いてみませんか`・`聞いてみる` / `今日はここまでにする`（終了画面の「手放す」は理念文として残す）
+- 配布文（`docs/demo-survey.md`）に体験URL・感想URL記載済み
+- UI文言: `書きました` / `話を聞いてみませんか`・`聞いてみる` / `今日はここまでにする`（終了画面の「手放す」は理念文として残す）
 
 ### 次にやること
 
-1. Googleフォームの Q5/Q6 文言をアプリに合わせる（`docs/demo-survey.md` 参照）
-2. シークレットでフォームがログインなし送信できるか確認
-3. 本番URL（スマホ）で体験 → 終了 → 「感想を送る」まで通し確認
-4. 配布文（`docs/demo-survey.md`）に体験URL・感想URLを入れて送る
+1. ロゴ要否を含む全体デザイン
+2. 「なぜこれをするか」の設計見直し
+3. シークレットでフォームがログインなし送信できるか確認（未確認なら）
+4. Googleフォーム実物の Q2/Q5/Q6 文言をアプリに合わせる（`docs/demo-survey.md` 参照）
 
 ---
 

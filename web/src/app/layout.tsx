@@ -10,7 +10,8 @@ const plex = IBM_Plex_Sans_JP({
 
 export const metadata: Metadata = {
   title: "Reflective AI",
-  description: "話す前に、少し書く。答えを与えない壁打ちのためのプロトタイプ。",
+  description:
+    "判断やアドバイスをしない壁打ち。書いたことはここには保存されません。",
 };
 
 export const viewport: Viewport = {
