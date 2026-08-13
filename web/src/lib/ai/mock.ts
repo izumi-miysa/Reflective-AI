@@ -1,4 +1,5 @@
 import type {
+  Person,
   PersonKind,
   ReflectRequest,
   ReflectResponse,
@@ -106,20 +107,29 @@ export function toReflectorLabel(
   return base ? `${base}さん` : trimmed;
 }
 
-/** 入力から主な相手の呼び方を拾い、リフレクターの呼び方に整える */
-export function extractPersonLabel(text: string): string {
-  const forms = extractNameForms(text);
-  if (forms.length > 0) {
-    return toReflectorLabel(forms[0], "name");
+/**
+ * 入力から聞こえた人を、書かれた順に拾う。
+ * 誰に話すかは本人が選ぶので、ここでは1人に絞らない。
+ */
+export function extractPeople(text: string, max = 3): Person[] {
+  const people: Person[] = [];
+  const push = (label: string, kind: PersonKind) => {
+    if (people.some((p) => p.label === label)) return;
+    people.push({ label, kind });
+  };
+
+  for (const form of extractNameForms(text)) {
+    push(toReflectorLabel(form, "name"), "name");
   }
 
-  for (const word of ROLE_WORDS) {
-    if (text.includes(word)) {
-      return toReflectorLabel(word, "relation");
-    }
+  const hits = ROLE_WORDS.filter((word) => text.includes(word)).sort(
+    (a, b) => text.indexOf(a) - text.indexOf(b),
+  );
+  for (const word of hits) {
+    push(toReflectorLabel(word, "relation"), "relation");
   }
 
-  return "その方";
+  return people.slice(0, max);
 }
 
 function quoteSnippet(text: string, max = 40): string {
@@ -133,22 +143,22 @@ export async function mockReflect(
 ): Promise<ReflectResponse> {
   await delay(700);
 
-  const personLabel =
-    input.personLabel ?? extractPersonLabel(input.writing);
+  const people = extractPeople(input.writing);
 
   if (input.reflectRound === 0) {
     const mentioned =
-      personLabel === "その方"
-        ? "書かれた内容のなかに、気になる相手の気配がありました。"
-        : `「${personLabel}」のことが書かれていましたね。`;
+      people.length === 0
+        ? "書かれた内容を、こちらで聞いていました。"
+        : `${people.map((p) => p.label).join("、")}のことが書かれていましたね。`;
 
     return {
-      personLabel,
-      suggestStage: true,
+      people,
       message: [
         mentioned,
         "ここでは答えは返しません。",
-        `もしよければ、${personLabel}に向けて、ここで少し話してみることもできます。`,
+        people.length === 0
+          ? "今日はここまでにしても大丈夫です。"
+          : "話してみたい相手がいれば、ここで話すこともできます。",
       ].join("\n"),
     };
   }
@@ -162,8 +172,7 @@ export async function mockReflect(
     : "ステージでのやり取りを、こちらで聞いていました。";
 
   return {
-    personLabel,
-    suggestStage: true,
+    people,
     message: [
       heard,
       "今のやり取りのなかで、印象に残った言葉がありました。",

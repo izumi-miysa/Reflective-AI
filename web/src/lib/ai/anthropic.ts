@@ -1,11 +1,12 @@
 import Anthropic from "@anthropic-ai/sdk";
 import {
   extractNameForms,
-  extractPersonLabel,
+  extractPeople,
   toReflectorLabel,
 } from "@/lib/ai/mock";
 import { REFLECT_SYSTEM, STAGE_SYSTEM } from "@/lib/ai/prompts";
 import type {
+  Person,
   PersonKind,
   ReflectRequest,
   ReflectResponse,
@@ -13,9 +14,28 @@ import type {
   StageResponse,
 } from "@/lib/types";
 
-type ParsedReflect = ReflectResponse & { personKind: PersonKind };
-
 const PERSON_KINDS: PersonKind[] = ["name", "relation", "role", "unknown"];
+
+function toPeople(raw: unknown): Person[] {
+  if (!Array.isArray(raw)) return [];
+
+  const people: Person[] = [];
+  for (const item of raw) {
+    if (!item || typeof item !== "object") continue;
+    const { label, kind } = item as { label?: unknown; kind?: unknown };
+    if (typeof label !== "string" || !label.trim()) continue;
+
+    const safeKind =
+      typeof kind === "string" && PERSON_KINDS.includes(kind as PersonKind)
+        ? (kind as PersonKind)
+        : "unknown";
+    const normalized = toReflectorLabel(label, safeKind);
+    if (people.some((p) => p.label === normalized)) continue;
+    people.push({ label: normalized, kind: safeKind });
+  }
+
+  return people.slice(0, 3);
+}
 
 function getClient() {
   const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -37,7 +57,7 @@ function textFromMessage(message: Anthropic.Message): string {
     .trim();
 }
 
-function parseReflectJson(raw: string): ParsedReflect {
+function parseReflectJson(raw: string): ReflectResponse {
   const cleaned = raw
     .replace(/^```json\s*/i, "")
     .replace(/^```\s*/i, "")
@@ -50,20 +70,18 @@ function parseReflectJson(raw: string): ParsedReflect {
     throw new Error("reflect response is not JSON");
   }
 
-  const parsed = JSON.parse(cleaned.slice(start, end + 1)) as Partial<ParsedReflect>;
+  const parsed = JSON.parse(cleaned.slice(start, end + 1)) as {
+    people?: unknown;
+    message?: unknown;
+  };
 
-  if (!parsed.message?.trim()) {
+  if (typeof parsed.message !== "string" || !parsed.message.trim()) {
     throw new Error("reflect message is empty");
   }
 
-  const kind = parsed.personKind;
-
   return {
-    personLabel: parsed.personLabel?.trim() || "その方",
-    personKind:
-      kind && PERSON_KINDS.includes(kind) ? kind : "unknown",
+    people: toPeople(parsed.people),
     message: parsed.message.trim(),
-    suggestStage: parsed.suggestStage !== false,
   };
 }
 
@@ -86,7 +104,8 @@ function buildReflectUserPrompt(input: ReflectRequest): string {
   if (input.reflectRound === 0) {
     return [
       "これは初回のリフレクトです。利用者がエクスプレッシブ・ライティングで書いた内容です。",
-      "内容から人物を自然に拾い、ここでその相手に向けて話してみる提案を一度だけしてください。",
+      "内容に出てきた人を people に列挙し、聞こえたことを一度だけ伝えてください。",
+      "誰に話すかは本人が画面で選びます。message では相手を1人に絞ったり指名したりしないでください。",
       "伝える／伝えない／急がなくてよい、といった決断の話はしないでください。",
       nameFormsLine,
       "",
@@ -97,7 +116,8 @@ function buildReflectUserPrompt(input: ReflectRequest): string {
 
   return [
     "ステージでの対話を聞いたあとのリフレクトです。一度だけ話してください。",
-    `既に決まっている相手の呼び方: ${input.personLabel ?? "その方"}`,
+    `本人が選んだ相手の呼び方: ${input.personLabel ?? "（まだ選ばれていません）"}`,
+    "people は、内容に出てきた人をそのまま列挙してください（選び直せるようにするためです）。",
     nameFormsLine,
     "聞こえたこと・印象に残ったことにとどめてください。",
     "伝える／伝えない／今日でなくていい／急がなくてよい、といった決断のメニューや助言は出さないでください。",
@@ -124,24 +144,18 @@ export async function anthropicReflect(
 
   try {
     const result = parseReflectJson(textFromMessage(message));
-    if (input.personLabel) {
-      result.personLabel = input.personLabel;
-    } else {
-      result.personLabel = toReflectorLabel(
-        result.personLabel || "その方",
-        result.personKind,
-      );
+    // モデルが people を返さなかったときも、選ぶ余地は残す
+    if (result.people.length === 0) {
+      result.people = extractPeople(input.writing);
     }
     return result;
   } catch (error) {
     console.error("[anthropic] reflect parse failed", error);
-    const fallbackLabel =
-      input.personLabel ?? extractPersonLabel(input.writing);
     return {
-      personLabel: fallbackLabel,
-      suggestStage: true,
-      message: textFromMessage(message) ||
-        `「${fallbackLabel}」のことが書かれていましたね。ここでは答えは返しません。必要なとき、ここで少し話してみることもできます。`,
+      people: extractPeople(input.writing),
+      message:
+        textFromMessage(message) ||
+        "書かれた内容を、こちらで聞いていました。ここでは答えは返しません。話してみたい相手がいれば、ここで話すこともできます。",
     };
   }
 }

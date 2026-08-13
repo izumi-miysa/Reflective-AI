@@ -28,10 +28,15 @@ export type ReflectRequest = {
 /** 呼び方の種類。「さん」の付け方が種類ごとに変わるため、リフレクターに判定させる */
 export type PersonKind = "name" | "relation" | "role" | "unknown";
 
+export type Person = {
+  label: string;
+  kind: PersonKind;
+};
+
 export type ReflectResponse = {
-  personLabel: string;
+  /** 書かれた内容から聞こえた人。誰に話すかは本人が選ぶので、ここでは絞らない */
+  people: Person[];
   message: string;
-  suggestStage: boolean;
 };
 
 export type StageRequest = {

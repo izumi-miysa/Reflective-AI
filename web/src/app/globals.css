@@ -305,6 +305,16 @@ textarea {
   font-size: 13px;
 }
 
+.choose-lead {
+  margin: 14px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.choose-lead + .boundary-note {
+  margin-top: 6px;
+}
+
 .end-hint {
   margin: 14px 0 0;
   color: var(--muted);

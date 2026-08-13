@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { ChatMessage, Phase } from "@/lib/types";
+import type { ChatMessage, Person, Phase } from "@/lib/types";
 
 function uid() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -17,6 +17,7 @@ export function SessionApp() {
   const [writing, setWriting] = useState("");
   const [draft, setDraft] = useState("");
   const [personLabel, setPersonLabel] = useState<string | null>(null);
+  const [candidates, setCandidates] = useState<Person[]>([]);
   const [reflectorMessages, setReflectorMessages] = useState<ChatMessage[]>(
     [],
   );
@@ -103,7 +104,7 @@ export function SessionApp() {
       if (!res.ok) throw new Error("reflect failed");
       const data = await res.json();
 
-      setPersonLabel(data.personLabel);
+      setCandidates(data.people ?? []);
       setReflectRound(1);
       setReflectorMessages([
         {
@@ -121,20 +122,26 @@ export function SessionApp() {
     }
   }
 
-  async function openStage() {
-    if (!personLabel || busy) return;
+  function openStage(person: string) {
+    if (busy) return;
+    const switched = personLabel !== null && personLabel !== person;
+
+    setPersonLabel(person);
     setPhase("stage");
     setError(null);
     setStageExchanges(0);
     setShowPauseOffer(false);
     setPauseOfferDismissed(false);
 
-    if (stageMessages.length === 0) {
+    // 相手を変えたら、前の相手とのやり取りは持ち込まない
+    if (switched) setStageMessages([]);
+
+    if (switched || stageMessages.length === 0) {
       setStageMessages([
         {
           id: uid(),
           speaker: "system",
-          text: `${personLabel}の発言は、AIが視点を推測して声を代わりに担っています。実際のその人ではありません。あなたから話しかけてみてください。`,
+          text: `${person}の発言は、AIが視点を推測して声を代わりに担っています。実際のその人ではありません。あなたから話しかけてみてください。`,
           at: Date.now(),
         },
       ]);
@@ -229,7 +236,9 @@ export function SessionApp() {
       if (!res.ok) throw new Error("reflect failed");
       const data = await res.json();
 
-      setPersonLabel(data.personLabel);
+      if (Array.isArray(data.people) && data.people.length > 0) {
+        setCandidates(data.people);
+      }
       setReflectRound((n) => n + 1);
       setReflectorMessages((prev) => [
         ...prev,
@@ -259,6 +268,7 @@ export function SessionApp() {
     setWriting("");
     setDraft("");
     setPersonLabel(null);
+    setCandidates([]);
     setReflectorMessages([]);
     setStageMessages([]);
     setReflectRound(0);
@@ -340,21 +350,33 @@ export function SessionApp() {
                     ? "続きが必要なら、もう一度声をかけてみてください。終わってもよいと感じたら、ここで閉じて大丈夫です。この会話は保存されません。"
                     : "今は話さなくても大丈夫です。終わってもよいと感じたら、ここで閉じてください。この会話は保存されません。"}
                 </p>
-                <p className="boundary-note">
-                  相手役の声は、AIが視点を推測して演じます。実際のご本人に届くことはありません。
-                </p>
+                {candidates.length > 0 && (
+                  <>
+                    <p className="choose-lead">
+                      話してみたい相手がいれば、選んでください。
+                    </p>
+                    <p className="boundary-note">
+                      相手役の声は、AIが視点を推測して演じます。実際のご本人に届くことはありません。
+                    </p>
+                    <div className="actions">
+                      {candidates.map((person) => (
+                        <button
+                          key={person.label}
+                          type="button"
+                          className="btn primary"
+                          disabled={busy}
+                          onClick={() => openStage(person.label)}
+                        >
+                          {person.label}と話してみる
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
                 <div className="actions">
                   <button
                     type="button"
-                    className="btn primary"
-                    disabled={busy}
-                    onClick={openStage}
-                  >
-                    少し話してみませんか
-                  </button>
-                  <button
-                    type="button"
-                    className="btn ghost"
+                    className={`btn ${candidates.length > 0 ? "ghost" : "primary"}`}
                     disabled={busy}
                     onClick={endSession}
                   >
@@ -511,7 +533,7 @@ export function SessionApp() {
           <h1>この会話は、ここで終わります</h1>
           <p className="hint">
             内容は保存されていません。話すことは、手放すことです。
-            ここで閉じても大丈夫です。
+            また書きたくなったら、いつでも来てください。
           </p>
           <div className="actions">
             {process.env.NEXT_PUBLIC_SURVEY_URL ? (
