@@ -52,6 +52,15 @@ function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/**
+ * 名前として扱う部分。「効いている様だ」の「様」を敬称と誤認しないよう、
+ * 漢字・カタカナ・英字だけの短い語に限る（ひらがなを含む語は名前として拾わない）。
+ */
+const NAME_BODY = /^[一-龥ァ-ヶーA-Za-zＡ-Ｚａ-ｚ]{1,6}$/;
+
+/** 「神様」「皆さん」のような一般語を人名として拾わないための除外 */
+const NOT_NAME_BASES = new Set(["皆", "様", "神", "王", "何", "殿", "姫", "客"]);
+
 /** 文中の「名前＋敬称」を、書かれた表記のまま列挙する */
 export function extractNameForms(text: string): string[] {
   const re =
@@ -64,7 +73,7 @@ export function extractNameForms(text: string): string[] {
     const shortName = name.includes("の")
       ? name.split("の").filter(Boolean).pop() ?? name
       : name;
-    if (shortName.length === 0) continue;
+    if (!NAME_BODY.test(shortName) || NOT_NAME_BASES.has(shortName)) continue;
     const full = `${shortName}${match[2]}`;
     if (!found.includes(full)) found.push(full);
   }

@@ -341,9 +341,7 @@ export function SessionApp() {
                     : "今は話さなくても大丈夫です。終わってもよいと感じたら、ここで閉じてください。この会話は保存されません。"}
                 </p>
                 <p className="boundary-note">
-                  {personLabel
-                    ? `${personLabel}の声は、AIが視点を推測して演じます。実際のご本人に届くことはありません。`
-                    : "相手役の声は、AIが視点を推測して演じます。実際のご本人に届くことはありません。"}
+                  相手役の声は、AIが視点を推測して演じます。実際のご本人に届くことはありません。
                 </p>
                 <div className="actions">
                   <button
@@ -352,9 +350,7 @@ export function SessionApp() {
                     disabled={busy}
                     onClick={openStage}
                   >
-                    {personLabel
-                      ? `${personLabel}に、少し声をかけてみますか`
-                      : "少し、声をかけてみますか"}
+                    少し話してみませんか
                   </button>
                   <button
                     type="button"
