@@ -1,10 +1,12 @@
 import type {
+  PersonKind,
   ReflectRequest,
   ReflectResponse,
   StageRequest,
   StageResponse,
 } from "@/lib/types";
 
+/** 「義母」が「母」より先に一致するよう、長い語を前に置く */
 const ROLE_WORDS = [
   "部下",
   "上司",
@@ -14,6 +16,8 @@ const ROLE_WORDS = [
   "パートナー",
   "夫",
   "妻",
+  "義母",
+  "義父",
   "母",
   "父",
   "子ども",
@@ -25,7 +29,24 @@ const ROLE_WORDS = [
   "顧客",
 ] as const;
 
-const HONORIFICS = ["さん", "くん", "ちゃん", "君", "さま", "様", "氏"] as const;
+/** 人がリフレクトする場での続柄の呼び方 */
+const RELATION_LABELS: Record<string, string> = {
+  娘: "娘さん",
+  息子: "息子さん",
+  子ども: "お子さん",
+  子供: "お子さん",
+  母: "お母さん",
+  父: "お父さん",
+  義母: "お義母さん",
+  義父: "お義父さん",
+  兄: "お兄さん",
+  姉: "お姉さん",
+  弟: "弟さん",
+  妹: "妹さん",
+};
+
+const NAME_HONORIFIC = /(さん|くん|ちゃん|君|さま|様|氏)$/;
+const POLITE_HONORIFIC = /(さん|さま|様|氏)$/;
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -50,54 +71,46 @@ export function extractNameForms(text: string): string[] {
   return found;
 }
 
-/** 入力から主な相手の呼び方を事実ベースで拾う（敬称は変えない） */
+/**
+ * リフレクターが呼ぶときの形に整える。
+ * 人がリフレクトする場では「泉」も「泉ちゃん」も「泉さん」と呼ばれるため、そこに寄せる。
+ * 妻・夫・上司などの言い方と、役職は本人が書いたまま残す。
+ */
+export function toReflectorLabel(
+  label: string,
+  kind: PersonKind = "unknown",
+): string {
+  const trimmed = label.trim();
+  if (!trimmed || trimmed === "その方") return "その方";
+  if (kind === "role") return trimmed;
+
+  if (kind === "relation" || RELATION_LABELS[trimmed]) {
+    if (Object.values(RELATION_LABELS).includes(trimmed)) return trimmed;
+    return RELATION_LABELS[trimmed] ?? trimmed;
+  }
+
+  // 人名と判定できていないものに「さん」を付けると「仕事さん」のような事故になる
+  if (kind === "unknown" && !NAME_HONORIFIC.test(trimmed)) return trimmed;
+
+  if (POLITE_HONORIFIC.test(trimmed)) return trimmed;
+  const base = trimmed.replace(NAME_HONORIFIC, "");
+  return base ? `${base}さん` : trimmed;
+}
+
+/** 入力から主な相手の呼び方を拾い、リフレクターの呼び方に整える */
 export function extractPersonLabel(text: string): string {
   const forms = extractNameForms(text);
   if (forms.length > 0) {
-    // 最初に出てきた表記を優先（勝手にさん付けしない）
-    return forms[0];
+    return toReflectorLabel(forms[0], "name");
   }
 
   for (const word of ROLE_WORDS) {
     if (text.includes(word)) {
-      return word;
+      return toReflectorLabel(word, "relation");
     }
   }
 
   return "その方";
-}
-
-/**
- * モデルが敬称を正規化した場合に、原文の表記へ戻す。
- * 例: 原文が「Nくん」なのに「Nさん」と返ってきたとき →「Nくん」
- */
-export function alignPersonLabel(
-  label: string,
-  writing: string,
-): string {
-  const trimmed = label.trim();
-  if (!trimmed || trimmed === "その方") {
-    return extractPersonLabel(writing);
-  }
-
-  const forms = extractNameForms(writing);
-  if (forms.includes(trimmed)) return trimmed;
-
-  const base = trimmed.replace(
-    /(さん|くん|ちゃん|君|さま|様|氏)$/,
-    "",
-  );
-  const sameBase = forms.find((form) =>
-    form.replace(/(さん|くん|ちゃん|君|さま|様|氏)$/, "") === base,
-  );
-  if (sameBase) return sameBase;
-
-  // 原文に無い敬称へ勝手に付け替えていないか、最低限チェック
-  for (const honorific of HONORIFICS) {
-    if (trimmed.endsWith(honorific)) return trimmed;
-  }
-
-  return trimmed;
 }
 
 function quoteSnippet(text: string, max = 40): string {

@@ -29,7 +29,7 @@ export function SessionApp() {
   const [showPauseOffer, setShowPauseOffer] = useState(false);
   const [pauseOfferDismissed, setPauseOfferDismissed] = useState(false);
 
-  const stageEndRef = useRef<HTMLDivElement>(null);
+  const stageLastRef = useRef<HTMLElement | null>(null);
   const reflectEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,8 +47,12 @@ export function SessionApp() {
       .catch(() => setProviderLabel("不明"));
   }, []);
 
+  // 枠より長い発言のときは、末尾ではなくその発言の先頭が見えるところで止める
   useEffect(() => {
-    stageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    stageLastRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+    });
   }, [stageMessages, phase]);
 
   useEffect(() => {
@@ -280,9 +284,10 @@ export function SessionApp() {
 
       {phase === "writing" && (
         <section className="panel writing-panel">
-          <h1>
-            今、気になっていることを書いてみませんか。うまくまとめなくても大丈夫です。
-          </h1>
+          <h1>今、心にあることを書いてみませんか</h1>
+          <p className="hint">
+            うれしかったことでも、もやもやでも。うまくまとめなくて大丈夫です。
+          </p>
           <textarea
             className="writing-area"
             value={writing}
@@ -292,7 +297,7 @@ export function SessionApp() {
             disabled={busy}
           />
           <p className="writing-assurance">
-            判断やアドバイスはしません。書いたことは、ここには保存されません。
+            判断やアドバイスはしません。書いたことは応答をつくるためにAIへ送られますが、保存されず、ほかの人に伝わることもありません。
           </p>
           <div className="actions">
             <button
@@ -334,6 +339,11 @@ export function SessionApp() {
                   {reflectRound > 1
                     ? "続きが必要なら、もう一度声をかけてみてください。終わってもよいと感じたら、ここで閉じて大丈夫です。この会話は保存されません。"
                     : "今は話さなくても大丈夫です。終わってもよいと感じたら、ここで閉じてください。この会話は保存されません。"}
+                </p>
+                <p className="boundary-note">
+                  {personLabel
+                    ? `${personLabel}の声は、AIが視点を推測して演じます。実際のご本人に届くことはありません。`
+                    : "相手役の声は、AIが視点を推測して演じます。実際のご本人に届くことはありません。"}
                 </p>
                 <div className="actions">
                   <button
@@ -432,10 +442,17 @@ export function SessionApp() {
                     あなたから話しかけてください。相手役は、そのあとに応じます。
                   </p>
                 )}
-              {stageMessages.map((m) => {
+              {stageMessages.map((m, index) => {
+                const lastRef =
+                  index === stageMessages.length - 1
+                    ? (el: HTMLElement | null) => {
+                        stageLastRef.current = el;
+                      }
+                    : undefined;
+
                 if (m.speaker === "system") {
                   return (
-                    <p key={m.id} className="stage-system">
+                    <p key={m.id} ref={lastRef} className="stage-system">
                       {m.text}
                     </p>
                   );
@@ -448,7 +465,7 @@ export function SessionApp() {
                       ? `相手役：${personLabel}`
                       : "相手役";
                 return (
-                  <div key={m.id} className={`stage-row ${side}`}>
+                  <div key={m.id} ref={lastRef} className={`stage-row ${side}`}>
                     <div className="stage-meta">{who}</div>
                     <div
                       className={`stage-bubble ${m.speaker === "counterpart" ? "counterpart" : "user"}`}
@@ -458,7 +475,6 @@ export function SessionApp() {
                   </div>
                 );
               })}
-              <div ref={stageEndRef} />
             </div>
 
             {phase === "stage" && (

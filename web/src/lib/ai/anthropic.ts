@@ -1,12 +1,21 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { alignPersonLabel, extractNameForms, extractPersonLabel } from "@/lib/ai/mock";
+import {
+  extractNameForms,
+  extractPersonLabel,
+  toReflectorLabel,
+} from "@/lib/ai/mock";
 import { REFLECT_SYSTEM, STAGE_SYSTEM } from "@/lib/ai/prompts";
 import type {
+  PersonKind,
   ReflectRequest,
   ReflectResponse,
   StageRequest,
   StageResponse,
 } from "@/lib/types";
+
+type ParsedReflect = ReflectResponse & { personKind: PersonKind };
+
+const PERSON_KINDS: PersonKind[] = ["name", "relation", "role", "unknown"];
 
 function getClient() {
   const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -28,7 +37,7 @@ function textFromMessage(message: Anthropic.Message): string {
     .trim();
 }
 
-function parseReflectJson(raw: string): ReflectResponse {
+function parseReflectJson(raw: string): ParsedReflect {
   const cleaned = raw
     .replace(/^```json\s*/i, "")
     .replace(/^```\s*/i, "")
@@ -41,14 +50,18 @@ function parseReflectJson(raw: string): ReflectResponse {
     throw new Error("reflect response is not JSON");
   }
 
-  const parsed = JSON.parse(cleaned.slice(start, end + 1)) as Partial<ReflectResponse>;
+  const parsed = JSON.parse(cleaned.slice(start, end + 1)) as Partial<ParsedReflect>;
 
   if (!parsed.message?.trim()) {
     throw new Error("reflect message is empty");
   }
 
+  const kind = parsed.personKind;
+
   return {
     personLabel: parsed.personLabel?.trim() || "その方",
+    personKind:
+      kind && PERSON_KINDS.includes(kind) ? kind : "unknown",
     message: parsed.message.trim(),
     suggestStage: parsed.suggestStage !== false,
   };
@@ -65,8 +78,10 @@ function buildReflectUserPrompt(input: ReflectRequest): string {
   const nameForms = extractNameForms(input.writing);
   const nameFormsLine =
     nameForms.length > 0
-      ? `文中の呼び方（一字一句このまま使え）: ${nameForms.join("、")}`
-      : "文中に明確な「名前＋敬称」は見つかりませんでした。勝手に敬称を付けないでください。";
+      ? `文中の呼び方 → あなたが使う呼び方: ${nameForms
+          .map((form) => `${form} → ${toReflectorLabel(form, "name")}`)
+          .join("、")}`
+      : "文中に明確な「名前＋敬称」はありません。人名を見つけたら「さん」を付け、続柄・役職はルールどおりに整えてください。";
 
   if (input.reflectRound === 0) {
     return [
@@ -112,9 +127,9 @@ export async function anthropicReflect(
     if (input.personLabel) {
       result.personLabel = input.personLabel;
     } else {
-      result.personLabel = alignPersonLabel(
+      result.personLabel = toReflectorLabel(
         result.personLabel || "その方",
-        input.writing,
+        result.personKind,
       );
     }
     return result;

@@ -25,6 +25,9 @@ export type ReflectRequest = {
   reflectRound: number;
 };
 
+/** 呼び方の種類。「さん」の付け方が種類ごとに変わるため、リフレクターに判定させる */
+export type PersonKind = "name" | "relation" | "role" | "unknown";
+
 export type ReflectResponse = {
   personLabel: string;
   message: string;
