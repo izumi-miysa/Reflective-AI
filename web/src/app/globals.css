@@ -637,7 +637,7 @@ textarea {
     font-size: 15px;
   }
 
-  /* スマホでは「聞いてみる」を画面下部に固定して離脱を防ぐ */
+  /* スマホでは「返してもらう」を画面下部に固定して離脱を防ぐ */
   .pause-offer {
     position: fixed;
     left: 10px;

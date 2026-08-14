@@ -342,7 +342,7 @@ export function SessionApp() {
                 {candidates.length > 0 ? (
                   <>
                     <p className="choose-lead">
-                      話してみたい相手がいれば、選んでください。
+                      ここで、相手を想定して話してみませんか。
                     </p>
                     <p className="boundary-note">
                       相手役の声は、AIが視点を推測して演じます。実際のご本人に届くことはありません。
@@ -364,7 +364,7 @@ export function SessionApp() {
                 ) : (
                   <>
                     <p className="choose-lead">
-                      話してみたい相手がいれば、呼び方を書いてください。
+                      ここで、相手を想定して話してみませんか。
                     </p>
                     <p className="boundary-note">
                       相手役の声は、AIが視点を推測して演じます。実際のご本人に届くことはありません。
@@ -411,18 +411,17 @@ export function SessionApp() {
             {phase === "stage" && !showPauseOffer && (
               <p className="boundary-note">
                 ステージが開いているあいだ、Reflective AIは発言しません。
-                およそ4往復、またはしばらく沈黙が続いたタイミングで、話を聞いてみる提案が出ます。
+                およそ4往復、またはしばらく沈黙が続いたタイミングで、少し離れて返してもらう提案が出ます。
               </p>
             )}
 
             {phase === "stage" && showPauseOffer && (
               <div className="pause-offer">
                 <p className="pause-offer-title">
-                  ここで一度、話を聞いてみませんか
+                  ここで一度、今のやり取りを少し離れて返してもらいませんか
                 </p>
                 <p className="pause-offer-body">
-                  Reflective
-                  AIが外側から一度だけ話します。まだ終わりません。続けることもできます。
+                  聞こえたことを、一度だけ返します。まだ終わりません。続けることもできます。
                 </p>
                 <div className="actions">
                   <button
@@ -431,7 +430,7 @@ export function SessionApp() {
                     disabled={busy}
                     onClick={closeStage}
                   >
-                    聞いてみる
+                    返してもらう
                   </button>
                   <button
                     type="button"
