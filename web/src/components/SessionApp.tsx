@@ -18,6 +18,7 @@ export function SessionApp() {
   const [draft, setDraft] = useState("");
   const [personLabel, setPersonLabel] = useState<string | null>(null);
   const [candidates, setCandidates] = useState<Person[]>([]);
+  const [customPerson, setCustomPerson] = useState("");
   const [reflectorMessages, setReflectorMessages] = useState<ChatMessage[]>(
     [],
   );
@@ -107,10 +108,12 @@ export function SessionApp() {
   }
 
   function openStage(person: string) {
-    if (busy) return;
-    const switched = personLabel !== null && personLabel !== person;
+    const name = person.trim();
+    if (busy || !name) return;
+    const switched = personLabel !== null && personLabel !== name;
 
-    setPersonLabel(person);
+    setPersonLabel(name);
+    setCustomPerson("");
     setPhase("stage");
     setError(null);
     setStageExchanges(0);
@@ -125,7 +128,7 @@ export function SessionApp() {
         {
           id: uid(),
           speaker: "system",
-          text: `${person}の発言は、AIが視点を推測して声を代わりに担っています。実際のその人ではありません。あなたから話しかけてみてください。`,
+          text: `${name}の発言は、AIが視点を推測して声を代わりに担っています。実際のその人ではありません。あなたから話しかけてみてください。`,
           at: Date.now(),
         },
       ]);
@@ -254,6 +257,7 @@ export function SessionApp() {
     setDraft("");
     setPersonLabel(null);
     setCandidates([]);
+    setCustomPerson("");
     setReflectorMessages([]);
     setStageMessages([]);
     setReflectRound(0);
@@ -335,7 +339,7 @@ export function SessionApp() {
                     ? "続きが必要なら、もう一度声をかけてみてください。終わってもよいと感じたら、ここで閉じて大丈夫です。この会話は保存されません。"
                     : "今は話さなくても大丈夫です。終わってもよいと感じたら、ここで閉じてください。この会話は保存されません。"}
                 </p>
-                {candidates.length > 0 && (
+                {candidates.length > 0 ? (
                   <>
                     <p className="choose-lead">
                       話してみたい相手がいれば、選んでください。
@@ -355,6 +359,39 @@ export function SessionApp() {
                           {person.label}と話してみる
                         </button>
                       ))}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="choose-lead">
+                      話してみたい相手がいれば、呼び方を書いてください。
+                    </p>
+                    <p className="boundary-note">
+                      相手役の声は、AIが視点を推測して演じます。実際のご本人に届くことはありません。
+                    </p>
+                    <div className="person-pick">
+                      <input
+                        type="text"
+                        value={customPerson}
+                        onChange={(e) => setCustomPerson(e.target.value)}
+                        placeholder="例: 同僚、お母さん"
+                        disabled={busy}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            const name = customPerson.trim();
+                            if (name) openStage(name);
+                          }
+                        }}
+                      />
+                      <button
+                        type="button"
+                        className="btn ghost compact"
+                        disabled={!customPerson.trim() || busy}
+                        onClick={() => openStage(customPerson.trim())}
+                      >
+                        話してみる
+                      </button>
                     </div>
                   </>
                 )}

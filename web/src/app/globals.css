@@ -315,6 +315,35 @@ textarea {
   margin-top: 6px;
 }
 
+.person-pick {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  min-width: 0;
+  width: 100%;
+}
+
+.person-pick input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 11px 16px;
+  background: #fff;
+  outline: none;
+}
+
+.person-pick input:focus {
+  border-color: #8aa4c0;
+  box-shadow: 0 0 0 4px rgba(42, 79, 122, 0.12);
+}
+
+.person-pick .btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
 .end-hint {
   margin: 14px 0 0;
   color: var(--muted);
@@ -552,6 +581,15 @@ textarea {
 
   .stage-input input {
     font-size: 16px;
+  }
+
+  .person-pick input {
+    font-size: 16px;
+  }
+
+  .person-pick .btn {
+    min-height: 44px;
+    padding: 10px 14px;
   }
 
   .stage-input .btn {
