@@ -104,7 +104,7 @@ function buildReflectUserPrompt(input: ReflectRequest): string {
   if (input.reflectRound === 0) {
     return [
       "これは初回のリフレクトです。利用者がエクスプレッシブ・ライティングで書いた内容です。",
-      "内容に出てきた人を people に列挙し、聞こえたことを一度だけ伝えてください。",
+      "内容に出てきた人を people に列挙し、聞こえたことを一度だけ伝えてください。引用だけで終わらず、伝わってきたものを一文添えてください。おおよそ3〜4文。",
       "誰に話すかは本人が画面で選びます。message では相手を1人に絞ったり指名したりしないでください。",
       "伝える／伝えない／急がなくてよい、といった決断の話はしないでください。",
       nameFormsLine,
@@ -131,6 +131,7 @@ function buildReflectUserPrompt(input: ReflectRequest): string {
     "people は、内容に出てきた人をそのまま列挙してください（選び直せるようにするためです）。",
     nameFormsLine,
     "聞こえたことの観察にとどめてください。同じ結びの言い回しを繰り返さないでください。",
+    "引用を並べて終わらないでください。引用のあと、そこから伝わってきたものを一文添えてください。助言や「私はこう思う」は付けないでください。おおよそ3〜4文。",
     "「〜という言葉が印象に残っています」も使ってよいですが、直前と同じ型は避けてください。",
     "伝える／伝えない／今日でなくていい／急がなくてよい、といった決断のメニューや助言は出さないでください。",
     "",
@@ -150,7 +151,7 @@ export async function anthropicReflect(
   const message = await client.messages.create({
     model: getModel(),
     max_tokens: 800,
-    temperature: 0.4,
+    temperature: 0.5,
     system: REFLECT_SYSTEM,
     messages: [{ role: "user", content: buildReflectUserPrompt(input) }],
   });

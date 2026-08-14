@@ -418,7 +418,7 @@ export function SessionApp() {
             {phase === "stage" && showPauseOffer && (
               <div className="pause-offer">
                 <p className="pause-offer-title">
-                  ここで一度、今のやり取りを少し離れて返してもらいませんか
+                  今のやり取りを、少し離れたところから返してもらいませんか
                 </p>
                 <p className="pause-offer-body">
                   聞こえたことを、一度だけ返します。まだ終わりません。続けることもできます。
