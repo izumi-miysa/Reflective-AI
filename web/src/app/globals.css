@@ -199,6 +199,12 @@ textarea {
   border: 1px solid var(--line);
 }
 
+.btn.soft {
+  background: var(--reflector-soft);
+  color: var(--reflector);
+  border: 1px solid #c9d7e8;
+}
+
 .btn.compact {
   padding: 8px 14px;
   font-size: 13px;

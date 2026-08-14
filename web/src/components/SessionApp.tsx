@@ -386,7 +386,7 @@ export function SessionApp() {
                       />
                       <button
                         type="button"
-                        className="btn ghost compact"
+                        className="btn soft compact"
                         disabled={!customPerson.trim() || busy}
                         onClick={() => openStage(customPerson.trim())}
                       >
