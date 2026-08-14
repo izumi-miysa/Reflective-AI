@@ -469,7 +469,7 @@ textarea {
 
 .foot {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 12px;
   color: var(--muted);
   font-size: 12px;

@@ -114,12 +114,24 @@ function buildReflectUserPrompt(input: ReflectRequest): string {
     ].join("\n");
   }
 
+  const previous =
+    input.previousReflectorMessages?.filter((text) => text.trim()) ?? [];
+  const previousBlock =
+    previous.length === 0
+      ? []
+      : [
+          "【直前までのリフレクト】（対話の続きにはしない。言い回しの重複を避けるためだけに見る）",
+          previous.map((text) => `・${text}`).join("\n"),
+          "上と同じ結び・同じ型で始めたり締めたりしないでください。",
+        ];
+
   return [
     "ステージでの対話を聞いたあとのリフレクトです。一度だけ話してください。",
     `本人が選んだ相手の呼び方: ${input.personLabel ?? "（まだ選ばれていません）"}`,
     "people は、内容に出てきた人をそのまま列挙してください（選び直せるようにするためです）。",
     nameFormsLine,
-    "聞こえたこと・印象に残ったことにとどめてください。",
+    "聞こえたことの観察にとどめてください。同じ結びの言い回しを繰り返さないでください。",
+    "「〜という言葉が印象に残っています」も使ってよいですが、直前と同じ型は避けてください。",
     "伝える／伝えない／今日でなくていい／急がなくてよい、といった決断のメニューや助言は出さないでください。",
     "",
     "【最初に書かれた内容】",
@@ -127,6 +139,7 @@ function buildReflectUserPrompt(input: ReflectRequest): string {
     "",
     "【ステージの対話】",
     stageText,
+    ...(previousBlock.length > 0 ? ["", ...previousBlock] : []),
   ].join("\n");
 }
 

@@ -23,6 +23,8 @@ export type ReflectRequest = {
   stageMessages: { speaker: "user" | "counterpart"; text: string }[];
   personLabel: string | null;
   reflectRound: number;
+  /** 直前までのリフレクト本文。言い回しの重複を避けるためだけに使う */
+  previousReflectorMessages?: string[];
 };
 
 /** 呼び方の種類。「さん」の付け方が種類ごとに変わるため、リフレクターに判定させる */

@@ -19,6 +19,7 @@ export async function POST(request: Request) {
       stageMessages: body.stageMessages ?? [],
       personLabel: body.personLabel ?? null,
       reflectRound: body.reflectRound ?? 0,
+      previousReflectorMessages: body.previousReflectorMessages,
     });
 
     return NextResponse.json(result);

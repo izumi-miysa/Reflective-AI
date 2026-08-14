@@ -13,19 +13,19 @@
 リポジトリ: https://github.com/izumi-miysa/Reflective-AI
 公開: https://reflective-ai-red.vercel.app
 アプリ: web/（Next.js）
-設計の正: Logs/Discussion-2026-08-08.md（構造）／Logs/Discussion-2026-08-12.md（Why）／Logs/Discussion-2026-08-14.md（直近の実装）
+設計の正: Logs/Discussion-2026-08-08.md（構造）／Logs/Discussion-2026-08-12.md（Why）／Logs/Discussion-2026-08-14.md（実装）／Logs/Discussion-2026-08-15.md（Why実例）
 
 いまの状態:
-- デモ公開・知人テスト中。指摘対応は 2026-08-14 分まで反映・push 済み（main は origin と同じ）
+- デモ公開・知人テスト中。2026-08-15 分（デザイン、Why実例、リフレクト言い回し）まで main に載せる
 - 話す相手はAIではなく本人が選ぶ形に変更済み
-- 卒業制作（AI Driven School）の1分進捗原稿を docs/presentation-script-1min.md に作成（未コミット）
+- 全体デザイン: マークは作らない。フッターのプロトタイプ表記は外し、タブは「R」の紺円
+- 評価者向けWhyの実例1本は docs/evaluator-why-example.md。1分原稿の山場もこの比較
+- docs/demo-survey.md の設問案は現行アプリに合わせて更新済み（公開中のGoogleフォームは未反映）
 
 次にやること:
-1. docs/demo-survey.md の設問を現在のアプリに合わせる（Q2の入口文言、Q4・Q5は相手を選ぶ形に変わった）
-2. ロゴ要否を含む全体デザイン
-3. 評価者向けWhyの実例1本（本人の実体験待ち）
+1. 公開中のGoogleフォームを docs/demo-survey.md の設問に合わせて直す（Q2・Q4・Q5）。直したらシークレットでログインなし送信を確認
 
-参照: @HANDOFF.md @Logs/Discussion-2026-08-14.md @docs/demo-survey.md
+参照: @HANDOFF.md @docs/evaluator-why-example.md @Logs/Discussion-2026-08-15.md
 ```
 
 ---
@@ -52,6 +52,8 @@
 | `Logs/Discussion-2026-08-08.md` | 境界線・3人・エクスプレッシブ・ライティング |
 | `Logs/Discussion-2026-08-12.md` | Why の設計（利用者向け／評価者向け） |
 | `Logs/Discussion-2026-08-14.md` | 知人テスト対応・敬称ルール・相手を本人が選ぶ変更 |
+| `Logs/Discussion-2026-08-15.md` | 評価者向けWhyの実例（ChatGPT比較） |
+| `docs/evaluator-why-example.md` | 評価者に渡す実例1本 |
 | `docs/presentation-script-1min.md` | 卒業制作の1分進捗原稿 |
 | `mockups/` / `slides/` | 発表・説明用の静的資料 |
 | `.env.local`（`web/`内・Git対象外） | 秘密情報。GitHubに上げない |
@@ -70,7 +72,11 @@
   環境変数: `AI_PROVIDER` / `ANTHROPIC_API_KEY` / `ANTHROPIC_MODEL` / `NEXT_PUBLIC_SURVEY_URL` 設定済み
 - Googleフォーム作成済み・アプリ終了画面から接続済み
 - 配布文（`docs/demo-survey.md`）に体験URL・感想URL記載済み
-- Git: `main` は origin と同じ（2026-08-14 時点で push 済み）
+- Git: `main` は origin と同じ（2026-08-15 時点で push）
+- `docs/demo-survey.md` の設問案は現行アプリに合わせて更新済み。公開中のGoogleフォームは未反映
+- 全体デザイン方針: ロゴマークは作らない／色と IBM Plex Sans JP は正／タグラインは画面に出さない。フッターのプロトタイプ表記は外し、タブは「R」の紺円
+- 評価者向けWhyの実例（2026-08-15）: 同じ入力を ChatGPT と比較。`docs/evaluator-why-example.md`。画面つき原文は `demo/0815夫-ChatGPTとの比較.docx`（未コミット）
+- リフレクトの言い回しは同じ結びを続けない（「印象に残っています」は使ってよい）
 
 ### 現在のアプリの画面（2026-08-14 時点）
 
@@ -87,15 +93,11 @@
 - 誰に話すかをAIが決めない（対象を見極めるのは本人の工程）
 - 効能を約束しない。「ゆっくり」「じっくり」「時間をかけて」は使わない（速度の話ではない）
 - 通知・リマインドは入れない
+- ロゴマークは画面に置かない（タブ用の「R」円だけ）。タグライン「話す前に、少し書く。」も画面には出さない
 
 ### 次にやること
 
-1. `docs/demo-survey.md` の設問を現在のアプリに合わせる  
-   Q2は入口文言が変わった。Q4・Q5は「相手役と話したか」「提案のタイミング」を聞いているが、いまは**相手を本人が選ぶ**形なので実態と合わない
-2. ロゴ要否を含む全体デザイン
-3. 評価者向けWhyの実例を1本つくる（本人の実体験待ち。`Logs/Discussion-2026-08-12.md` の B 節）
-4. `docs/presentation-script-1min.md`（卒業制作の1分原稿）は未コミット。残すならコミットする
-5. シークレットでフォームがログインなし送信できるか確認（未確認なら）
+1. 公開中のGoogleフォームを `docs/demo-survey.md` に合わせて直す（Q2入口コピー、Q4は相手を選ぶ、Q5は相手役とのやりとり）。直し方は同ファイル内。直したらシークレットでログインなし送信を確認
 
 ### 未追跡のまま置いてあるもの（意図的）
 

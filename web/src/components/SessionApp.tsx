@@ -25,28 +25,12 @@ export function SessionApp() {
   const [reflectRound, setReflectRound] = useState(0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [providerLabel, setProviderLabel] = useState("確認中…");
   const [stageExchanges, setStageExchanges] = useState(0);
   const [showPauseOffer, setShowPauseOffer] = useState(false);
   const [pauseOfferDismissed, setPauseOfferDismissed] = useState(false);
 
   const stageLastRef = useRef<HTMLElement | null>(null);
   const reflectEndRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    void fetch("/api/ai-status")
-      .then((res) => res.json())
-      .then((data: { provider: string; model: string | null }) => {
-        if (data.provider === "anthropic") {
-          setProviderLabel(
-            data.model ? `Claude（${data.model}）` : "Claude",
-          );
-        } else {
-          setProviderLabel("mock");
-        }
-      })
-      .catch(() => setProviderLabel("不明"));
-  }, []);
 
   // 枠より長い発言のときは、末尾ではなくその発言の先頭が見えるところで止める
   useEffect(() => {
@@ -230,6 +214,7 @@ export function SessionApp() {
           stageMessages: stageForApi,
           personLabel,
           reflectRound,
+          previousReflectorMessages: reflectorMessages.map((m) => m.text),
         }),
       });
 
@@ -555,14 +540,13 @@ export function SessionApp() {
 
       {error && <p className="error">{error}</p>}
 
-      <footer className="foot">
-        <span>骨格プロトタイプ · AI: {providerLabel}</span>
-        {(phase === "reflecting" || phase === "stage") && (
+      {(phase === "reflecting" || phase === "stage") && (
+        <footer className="foot">
           <button type="button" className="linkish" onClick={resetSession}>
             セッションを破棄
           </button>
-        )}
-      </footer>
+        </footer>
+      )}
     </div>
   );
 }

@@ -19,6 +19,10 @@ Reflective AI 制作用ファイルを探すための目次です。
 
 - `slides/reflective-ai-for-work-slides.html`  
   発表用HTMLスライド。Reflective AI for Work の概要、入口設計、相手役、言いっぱなし設計、収益モデルを含みます。
+- `docs/presentation-script-1min.md`  
+  卒業制作の1分進捗原稿。山場は ChatGPT との同じ入力比較。
+- `docs/evaluator-why-example.md`  
+  評価者向け Why の実例1本。同じ入力を ChatGPT と Reflective AI に投げた記録。
 - `docs/presentation-script-4min.md`  
   4分発表用の読み上げ原稿。表示するスライド番号とモックアップURLも含みます。
 - `docs/graduation-presentation-outline.md`  
