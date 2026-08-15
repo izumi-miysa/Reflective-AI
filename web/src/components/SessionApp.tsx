@@ -336,8 +336,8 @@ export function SessionApp() {
               <>
                 <p className="end-hint">
                   {reflectRound > 1
-                    ? "続きが必要なら、もう一度声をかけてみてください。終わってもよいと感じたら、ここで閉じて大丈夫です。この会話は保存されません。"
-                    : "今は話さなくても大丈夫です。終わってもよいと感じたら、ここで閉じてください。この会話は保存されません。"}
+                    ? "もう少し続けることも、ここで閉じることもできます。この会話は保存されません。"
+                    : "今は話さなくても大丈夫です。もう少し続けることもできます。この会話は保存されません。"}
                 </p>
                 {candidates.length > 0 ? (
                   <>
@@ -352,7 +352,7 @@ export function SessionApp() {
                         <button
                           key={person.label}
                           type="button"
-                          className="btn primary"
+                          className="btn soft"
                           disabled={busy}
                           onClick={() => openStage(person.label)}
                         >
