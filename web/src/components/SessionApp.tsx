@@ -83,6 +83,7 @@ export function SessionApp() {
           stageMessages: [],
           personLabel: null,
           reflectRound: 0,
+          previousReflectorMessages: reflectorMessages.map((m) => m.text),
         }),
       });
 
@@ -90,8 +91,9 @@ export function SessionApp() {
       const data = await res.json();
 
       setCandidates(data.people ?? []);
-      setReflectRound(1);
-      setReflectorMessages([
+      setReflectRound((n) => (n < 1 ? 1 : n));
+      setReflectorMessages((prev) => [
+        ...prev,
         {
           id: uid(),
           speaker: "reflector",
@@ -247,6 +249,12 @@ export function SessionApp() {
     }
   }
 
+  function continueWriting() {
+    if (busy) return;
+    setError(null);
+    setPhase("writing");
+  }
+
   function endSession() {
     setPhase("done");
   }
@@ -285,7 +293,9 @@ export function SessionApp() {
         <section className="panel writing-panel">
           <h1>今、心にあることを書いてみませんか</h1>
           <p className="hint">
-            うれしかったことでも、もやもやでも。うまくまとめなくて大丈夫です。
+            {reflectorMessages.length > 0
+              ? "足したいことがあれば、続きを書いてください。"
+              : "うれしかったことでも、もやもやでも。うまくまとめなくて大丈夫です。"}
           </p>
           <textarea
             className="writing-area"
@@ -396,6 +406,16 @@ export function SessionApp() {
                   </>
                 )}
                 <div className="actions">
+                  {reflectRound <= 1 && (
+                    <button
+                      type="button"
+                      className="btn ghost"
+                      disabled={busy}
+                      onClick={continueWriting}
+                    >
+                      もう少し続ける
+                    </button>
+                  )}
                   <button
                     type="button"
                     className={`btn ${candidates.length > 0 ? "ghost" : "primary"}`}
