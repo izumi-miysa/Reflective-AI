@@ -89,6 +89,7 @@ textarea {
   white-space: nowrap;
 }
 
+.phase-intro,
 .phase-writing {
   color: var(--user);
 }
@@ -121,6 +122,15 @@ textarea {
   font-size: clamp(21px, 2.4vw, 26px);
   line-height: 1.4;
   letter-spacing: -0.03em;
+}
+
+.intro-panel {
+  padding-top: 28px;
+  padding-bottom: 28px;
+}
+
+.intro-panel .hint {
+  margin-bottom: 0;
 }
 
 .hint {

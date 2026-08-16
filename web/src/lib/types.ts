@@ -1,4 +1,4 @@
-export type Phase = "writing" | "reflecting" | "stage" | "done";
+export type Phase = "intro" | "writing" | "reflecting" | "stage" | "done";
 
 export type Speaker = "user" | "counterpart" | "reflector" | "system";
 

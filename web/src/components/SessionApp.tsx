@@ -13,7 +13,7 @@ const STAGE_EXCHANGES_BEFORE_OFFER = 4;
 const STAGE_SILENCE_MS = 45_000;
 
 export function SessionApp() {
-  const [phase, setPhase] = useState<Phase>("writing");
+  const [phase, setPhase] = useState<Phase>("intro");
   const [writing, setWriting] = useState("");
   const [draft, setDraft] = useState("");
   const [personLabel, setPersonLabel] = useState<string | null>(null);
@@ -249,6 +249,11 @@ export function SessionApp() {
     }
   }
 
+  function enterWriting() {
+    setError(null);
+    setPhase("writing");
+  }
+
   function continueWriting() {
     if (busy) return;
     setError(null);
@@ -259,8 +264,7 @@ export function SessionApp() {
     setPhase("done");
   }
 
-  function resetSession() {
-    setPhase("writing");
+  function clearSession() {
     setWriting("");
     setDraft("");
     setPersonLabel(null);
@@ -276,6 +280,16 @@ export function SessionApp() {
     setError(null);
   }
 
+  function resetSession() {
+    clearSession();
+    setPhase("intro");
+  }
+
+  function startOverWriting() {
+    clearSession();
+    setPhase("writing");
+  }
+
   return (
     <div
       className={`shell phone-like-safe${phase === "stage" && showPauseOffer ? " has-pause-offer" : ""}`}
@@ -288,6 +302,23 @@ export function SessionApp() {
           {phaseLabel(phase, personLabel)}
         </span>
       </header>
+
+      {phase === "intro" && (
+        <section className="panel writing-panel intro-panel">
+          <h1>ここは、答えを出さない場所です</h1>
+          <p className="hint">
+            うれしかったことでも、もやもやでも。うまくまとめなくて大丈夫です。
+          </p>
+          <p className="writing-assurance">
+            判断やアドバイスはしません。書いたことは保存されず、ほかの人に伝わることもありません。
+          </p>
+          <div className="actions">
+            <button type="button" className="btn primary" onClick={enterWriting}>
+              書いてみる
+            </button>
+          </div>
+        </section>
+      )}
 
       {phase === "writing" && (
         <section className="panel writing-panel">
@@ -587,7 +618,11 @@ export function SessionApp() {
                 感想を送る（3分・ログイン不要）
               </a>
             ) : null}
-            <button type="button" className="btn ghost" onClick={resetSession}>
+            <button
+              type="button"
+              className="btn ghost"
+              onClick={startOverWriting}
+            >
               もう一度、書くところから
             </button>
           </div>
@@ -609,6 +644,8 @@ export function SessionApp() {
 
 function phaseLabel(phase: Phase, personLabel: string | null) {
   switch (phase) {
+    case "intro":
+      return "入口";
     case "writing":
       return "書く";
     case "reflecting":
