@@ -101,6 +101,17 @@ function buildReflectUserPrompt(input: ReflectRequest): string {
           .join("、")}`
       : "文中に明確な「名前＋敬称」はありません。人名を見つけたら「さん」を付け、続柄・役職はルールどおりに整えてください。";
 
+  const previous =
+    input.previousReflectorMessages?.filter((text) => text.trim()) ?? [];
+  const previousBlock =
+    previous.length === 0
+      ? []
+      : [
+          "【直前までのリフレクト】（対話の続きにはしない。言い回しの重複を避けるためだけに見る）",
+          previous.map((text) => `・${text}`).join("\n"),
+          "上と同じ結び・同じ型で始めたり締めたりしないでください。",
+        ];
+
   if (input.reflectRound === 0) {
     return [
       "これは初回のリフレクトです。利用者がエクスプレッシブ・ライティングで書いた内容です。",
@@ -114,16 +125,20 @@ function buildReflectUserPrompt(input: ReflectRequest): string {
     ].join("\n");
   }
 
-  const previous =
-    input.previousReflectorMessages?.filter((text) => text.trim()) ?? [];
-  const previousBlock =
-    previous.length === 0
-      ? []
-      : [
-          "【直前までのリフレクト】（対話の続きにはしない。言い回しの重複を避けるためだけに見る）",
-          previous.map((text) => `・${text}`).join("\n"),
-          "上と同じ結び・同じ型で始めたり締めたりしないでください。",
-        ];
+  if (input.stageMessages.length === 0) {
+    return [
+      "利用者が続きを書いたあとのリフレクトです。一度だけ話してください。対話の続きにはしないでください。",
+      "内容に出てきた人を people に列挙し、聞こえたことを一度だけ伝えてください。引用だけで終わらず、伝わってきたものを一文添えてください。おおよそ3〜4文。",
+      "誰に話すかは本人が画面で選びます。message では相手を1人に絞ったり指名したりしないでください。",
+      "伝える／伝えない／急がなくてよい、といった決断の話はしないでください。",
+      "「〜という言葉が印象に残っています」も使ってよいですが、直前と同じ型は避けてください。",
+      nameFormsLine,
+      "",
+      "【書かれた内容】",
+      input.writing,
+      ...(previousBlock.length > 0 ? ["", ...previousBlock] : []),
+    ].join("\n");
+  }
 
   return [
     "ステージでの対話を聞いたあとのリフレクトです。一度だけ話してください。",

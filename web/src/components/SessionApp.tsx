@@ -82,7 +82,7 @@ export function SessionApp() {
           writing: text,
           stageMessages: [],
           personLabel: null,
-          reflectRound: 0,
+          reflectRound,
           previousReflectorMessages: reflectorMessages.map((m) => m.text),
         }),
       });
@@ -91,7 +91,7 @@ export function SessionApp() {
       const data = await res.json();
 
       setCandidates(data.people ?? []);
-      setReflectRound((n) => (n < 1 ? 1 : n));
+      setReflectRound((n) => n + 1);
       setReflectorMessages((prev) => [
         ...prev,
         {

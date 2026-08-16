@@ -163,6 +163,19 @@ export async function mockReflect(
     };
   }
 
+  if (input.stageMessages.length === 0) {
+    return {
+      people,
+      message: [
+        "続きを書いてくれた内容を、こちらで聞いていました。",
+        "ここでは答えは返しません。",
+        people.length === 0
+          ? "今日はここまでにしても大丈夫です。"
+          : "話してみたい相手がいれば、ここで話すこともできます。",
+      ].join("\n"),
+    };
+  }
+
   const lastUser = [...input.stageMessages]
     .reverse()
     .find((m) => m.speaker === "user");
