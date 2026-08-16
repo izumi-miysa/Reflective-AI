@@ -27,6 +27,14 @@ Reflective AI 制作用ファイルを探すための目次です。
   4分発表用の読み上げ原稿。表示するスライド番号とモックアップURLも含みます。
 - `docs/graduation-presentation-outline.md`  
   卒業制作発表の構成案。スライド化前の下書きです。
+- `docs/reflective-ai-意義整理メモ.md`  
+  発表資料を組む前の意義整理メモ。
+- `docs/reflective_ai_design_doc.docx`  
+  設計メモ。
+- `docs/open_dialogue_reflecting_academic_references.docx`  
+  オープンダイアローグ関連の学術メモ。
+- `docs/ChatGPTの見立て_260813.docx` / `docs/Claudeの見立て_260813.docx`  
+  同じ時期の汎用AIによる見立て。
 
 ## モックアップ
 

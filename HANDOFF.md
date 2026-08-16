@@ -55,6 +55,10 @@
 | `Logs/Discussion-2026-08-14.md` | 知人テスト対応・敬称ルール・相手を本人が選ぶ変更 |
 | `Logs/Discussion-2026-08-15.md` | Why実例、誘導の指摘、「もう少し続ける」の設計 |
 | `docs/evaluator-why-example.md` | 評価者に渡す実例1本 |
+| `docs/reflective-ai-意義整理メモ.md` | 発表前の意義整理（素材メモ） |
+| `docs/reflective_ai_design_doc.docx` | 設計メモ |
+| `docs/open_dialogue_reflecting_academic_references.docx` | オープンダイアローグ関連の学術メモ |
+| `docs/ChatGPTの見立て_260813.docx` / `docs/Claudeの見立て_260813.docx` | 汎用AIの見立て（個人メモを docs に置いたもの） |
 | `docs/presentation-script-1min.md` | 卒業制作の1分進捗原稿 |
 | `mockups/` / `slides/` | 発表・説明用の静的資料 |
 | `.env.local`（`web/`内・Git対象外） | 秘密情報。GitHubに上げない |
@@ -109,7 +113,7 @@
 
 ### 未追跡のまま置いてあるもの（意図的）
 
-`demo/*.docx`、`ChatGPTの見立て_260813.docx`、`Claudeの見立て_260813.docx`、`ReflectiveAIの選択肢改善.pdf`（個人メモのためコミットしていない）
+`demo/*.docx`、`ReflectiveAIの選択肢改善.pdf`（知人テストの原文・家族の固有名が入る個人メモのため、GitHub には上げない）
 
 ---
 
