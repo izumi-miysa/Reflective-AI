@@ -362,6 +362,12 @@ export function SessionApp() {
                 <span>俯瞰するリフレクター（一度だけ話します）</span>
               </div>
             </div>
+            {writing.trim() ? (
+              <details className="written-recall">
+                <summary>書いたことを見る</summary>
+                <p className="written-recall-body">{writing}</p>
+              </details>
+            ) : null}
             <div className="reflect-log">
               {reflectorMessages.map((m) => (
                 <article key={m.id} className="reflect-bubble">
