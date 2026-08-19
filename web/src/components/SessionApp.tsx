@@ -306,15 +306,24 @@ export function SessionApp() {
       {phase === "intro" && (
         <section className="panel writing-panel intro-panel">
           <h1>ここは、答えを出さない場所です</h1>
+          <p className="intro-invite">
+            誰かに話したいこと、
+            <br />
+            聞いてもらいたいことはありませんか？
+          </p>
           <p className="hint">
-            うれしかったことでも、もやもやでも。うまくまとめなくて大丈夫です。
+            うれしかったことでも、もやもやでも。
+            <br />
+            うまくまとめなくて大丈夫です。
           </p>
           <p className="writing-assurance">
-            判断やアドバイスはしません。書いたことは保存されず、ほかの人に伝わることもありません。
+            判断やアドバイスはしません。
+            <br />
+            書いたことは保存されず、ほかの人に伝わることもありません。
           </p>
           <div className="actions">
             <button type="button" className="btn primary" onClick={enterWriting}>
-              書いてみる
+              話してみる
             </button>
           </div>
         </section>

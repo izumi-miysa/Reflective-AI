@@ -129,8 +129,19 @@ textarea {
   padding-bottom: 28px;
 }
 
+.intro-invite {
+  margin: 18px 0 16px;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
 .intro-panel .hint {
   margin-bottom: 0;
+  line-height: 1.75;
+}
+
+.intro-panel .writing-assurance {
+  line-height: 1.75;
 }
 
 .hint {
