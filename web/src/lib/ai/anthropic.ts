@@ -5,6 +5,7 @@ import {
   toReflectorLabel,
 } from "@/lib/ai/mock";
 import { REFLECT_SYSTEM, STAGE_SYSTEM } from "@/lib/ai/prompts";
+import { parseCrisisLevel } from "@/lib/crisis/detect";
 import type {
   Person,
   PersonKind,
@@ -73,6 +74,7 @@ function parseReflectJson(raw: string): ReflectResponse {
   const parsed = JSON.parse(cleaned.slice(start, end + 1)) as {
     people?: unknown;
     message?: unknown;
+    crisisLevel?: unknown;
   };
 
   if (typeof parsed.message !== "string" || !parsed.message.trim()) {
@@ -82,6 +84,7 @@ function parseReflectJson(raw: string): ReflectResponse {
   return {
     people: toPeople(parsed.people),
     message: parsed.message.trim(),
+    crisisLevel: parseCrisisLevel(parsed.crisisLevel),
   };
 }
 
@@ -174,7 +177,7 @@ export async function anthropicReflect(
   try {
     const result = parseReflectJson(textFromMessage(message));
     // モデルが people を返さなかったときも、選ぶ余地は残す
-    if (result.people.length === 0) {
+    if (result.people.length === 0 && result.crisisLevel !== 3) {
       result.people = extractPeople(input.writing);
     }
     return result;
@@ -185,6 +188,7 @@ export async function anthropicReflect(
       message:
         textFromMessage(message) ||
         "書かれた内容を、こちらで聞いていました。ここでは答えは返しません。話してみたい相手がいれば、ここで話すこともできます。",
+      crisisLevel: 1,
     };
   }
 }

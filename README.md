@@ -43,7 +43,7 @@ npm install
 npm run dev
 ```
 
-http://localhost:3000  
+http://localhost:3010  
 
 Claude を使う場合は `web/.env.local` に `AI_PROVIDER=anthropic` と `ANTHROPIC_API_KEY` を設定（手順は `web/README.md`）。未設定なら mock で動きます。
 

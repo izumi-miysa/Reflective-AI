@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAiProvider } from "@/lib/ai/provider";
+import { finalizeReflect } from "@/lib/crisis/apply";
 import type { ReflectRequest } from "@/lib/types";
 
 export async function POST(request: Request) {
@@ -13,16 +14,18 @@ export async function POST(request: Request) {
       );
     }
 
-    const provider = getAiProvider();
-    const result = await provider.reflect({
+    const input: ReflectRequest = {
       writing: body.writing,
       stageMessages: body.stageMessages ?? [],
       personLabel: body.personLabel ?? null,
       reflectRound: body.reflectRound ?? 0,
       previousReflectorMessages: body.previousReflectorMessages,
-    });
+    };
 
-    return NextResponse.json(result);
+    const provider = getAiProvider();
+    const result = await provider.reflect(input);
+
+    return NextResponse.json(finalizeReflect(input, result));
   } catch (error) {
     console.error("[api/reflect]", error);
     const detail =

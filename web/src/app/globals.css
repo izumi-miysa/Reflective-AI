@@ -435,6 +435,81 @@ textarea {
   margin-top: 12px;
 }
 
+.crisis-notice {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: #f7f8fa;
+  animation: none;
+}
+
+.crisis-notice.crisis-hold {
+  border-color: #c9d7e8;
+  background: var(--reflector-soft);
+}
+
+.crisis-notice-lead {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink);
+}
+
+.crisis-quiet .crisis-notice-lead {
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.crisis-hotlines {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.crisis-hotlines li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 12px;
+  font-size: 13px;
+}
+
+.crisis-hotline-name {
+  font-weight: 700;
+  color: var(--reflector);
+}
+
+.crisis-hotline-phone {
+  color: var(--reflector);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.crisis-hotline-hours {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.crisis-portal {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.crisis-portal a {
+  color: var(--reflector);
+}
+
+.crisis-notice .actions {
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+
 .stage-panel.dimmed {
   opacity: 0.72;
 }

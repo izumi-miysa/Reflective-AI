@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { ChatMessage, Person, Phase } from "@/lib/types";
+import { CrisisNotice } from "@/components/CrisisNotice";
+import { detectCrisisFloor, parseCrisisLevel } from "@/lib/crisis/detect";
+import type { ChatMessage, CrisisLevel, Person, Phase } from "@/lib/types";
 
 function uid() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -29,6 +31,10 @@ export function SessionApp() {
   const [stageExchanges, setStageExchanges] = useState(0);
   const [showPauseOffer, setShowPauseOffer] = useState(false);
   const [pauseOfferDismissed, setPauseOfferDismissed] = useState(false);
+  const [crisisLevel, setCrisisLevel] = useState<CrisisLevel>(1);
+
+  const crisisHold = crisisLevel >= 3;
+  const crisisQuiet = crisisLevel === 2;
 
   const stageLastRef = useRef<HTMLElement | null>(null);
   const reflectEndRef = useRef<HTMLDivElement>(null);
@@ -45,27 +51,33 @@ export function SessionApp() {
     reflectEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [reflectorMessages]);
 
-  // 4往復に達したら提案（断り済みなら出さない）
+  // 4往復に達したら提案（断り済み・危険信号で止めているときは出さない）
   useEffect(() => {
     if (
       phase === "stage" &&
+      !crisisHold &&
       stageExchanges >= STAGE_EXCHANGES_BEFORE_OFFER &&
       !pauseOfferDismissed
     ) {
       setShowPauseOffer(true);
     }
-  }, [phase, stageExchanges, pauseOfferDismissed]);
+  }, [phase, stageExchanges, pauseOfferDismissed, crisisHold]);
 
-  // 沈黙が続いたら提案（入力中・応答待ち中はリセット）
+  // 沈黙が続いたら提案（入力中・応答待ち中・危険信号では出さない）
   useEffect(() => {
-    if (phase !== "stage" || busy || showPauseOffer) return;
+    if (phase !== "stage" || busy || showPauseOffer || crisisHold) return;
 
     const timer = window.setTimeout(() => {
       setShowPauseOffer(true);
     }, STAGE_SILENCE_MS);
 
     return () => window.clearTimeout(timer);
-  }, [phase, busy, draft, stageMessages, showPauseOffer]);
+  }, [phase, busy, draft, stageMessages, showPauseOffer, crisisHold]);
+
+  function raiseCrisis(value: unknown) {
+    const next = parseCrisisLevel(value);
+    setCrisisLevel((prev) => (next > prev ? next : prev));
+  }
 
   async function submitWriting() {
     const text = writing.trim();
@@ -89,8 +101,9 @@ export function SessionApp() {
 
       if (!res.ok) throw new Error("reflect failed");
       const data = await res.json();
-
-      setCandidates(data.people ?? []);
+      const level = parseCrisisLevel(data.crisisLevel);
+      raiseCrisis(level);
+      setCandidates(level >= 3 ? [] : (data.people ?? []));
       setReflectRound((n) => n + 1);
       setReflectorMessages((prev) => [
         ...prev,
@@ -111,7 +124,7 @@ export function SessionApp() {
 
   function openStage(person: string) {
     const name = person.trim();
-    if (busy || !name) return;
+    if (busy || !name || crisisHold) return;
     const switched = personLabel !== null && personLabel !== name;
 
     setPersonLabel(name);
@@ -139,7 +152,7 @@ export function SessionApp() {
 
   async function sendStageMessage() {
     const text = draft.trim();
-    if (!text || !personLabel || busy || phase !== "stage") return;
+    if (!text || !personLabel || busy || phase !== "stage" || crisisHold) return;
 
     const nextUser: ChatMessage = {
       id: uid(),
@@ -157,8 +170,26 @@ export function SessionApp() {
 
     setStageMessages((prev) => [...prev, nextUser]);
     setDraft("");
-    setBusy(true);
     setError(null);
+
+    // 送った文をその場で見る。相手役に渡す前に止める
+    const localLevel = detectCrisisFloor(`${writing}\n${text}`);
+    raiseCrisis(localLevel);
+    if (localLevel >= 3) {
+      setShowPauseOffer(false);
+      setStageMessages((prev) => [
+        ...prev,
+        {
+          id: uid(),
+          speaker: "system",
+          text: "相手役は、ここでは応えません。",
+          at: Date.now(),
+        },
+      ]);
+      return;
+    }
+
+    setBusy(true);
 
     try {
       const res = await fetch("/api/stage", {
@@ -174,17 +205,32 @@ export function SessionApp() {
 
       if (!res.ok) throw new Error("stage failed");
       const data = await res.json();
+      const level = parseCrisisLevel(data.crisisLevel);
+      raiseCrisis(level);
 
-      setStageMessages((prev) => [
-        ...prev,
-        {
-          id: uid(),
-          speaker: "counterpart",
-          text: data.message,
-          at: Date.now(),
-        },
-      ]);
-      setStageExchanges((n) => n + 1);
+      if (level >= 3) {
+        setShowPauseOffer(false);
+        setStageMessages((prev) => [
+          ...prev,
+          {
+            id: uid(),
+            speaker: "system",
+            text: "相手役は、ここでは応えません。",
+            at: Date.now(),
+          },
+        ]);
+      } else {
+        setStageMessages((prev) => [
+          ...prev,
+          {
+            id: uid(),
+            speaker: "counterpart",
+            text: data.message,
+            at: Date.now(),
+          },
+        ]);
+        setStageExchanges((n) => n + 1);
+      }
     } catch {
       setError("相手役の応答に失敗しました。");
     } finally {
@@ -198,7 +244,7 @@ export function SessionApp() {
   }
 
   async function closeStage() {
-    if (busy) return;
+    if (busy || crisisHold) return;
     setBusy(true);
     setError(null);
     setShowPauseOffer(false);
@@ -225,8 +271,12 @@ export function SessionApp() {
 
       if (!res.ok) throw new Error("reflect failed");
       const data = await res.json();
+      const level = parseCrisisLevel(data.crisisLevel);
+      raiseCrisis(level);
 
-      if (Array.isArray(data.people) && data.people.length > 0) {
+      if (level >= 3) {
+        setCandidates([]);
+      } else if (Array.isArray(data.people) && data.people.length > 0) {
         setCandidates(data.people);
       }
       setReflectRound((n) => n + 1);
@@ -255,7 +305,7 @@ export function SessionApp() {
   }
 
   function continueWriting() {
-    if (busy) return;
+    if (busy || crisisHold) return;
     setError(null);
     setPhase("writing");
   }
@@ -276,6 +326,7 @@ export function SessionApp() {
     setStageExchanges(0);
     setShowPauseOffer(false);
     setPauseOfferDismissed(false);
+    setCrisisLevel(1);
     setBusy(false);
     setError(null);
   }
@@ -348,6 +399,7 @@ export function SessionApp() {
           <p className="writing-assurance">
             判断やアドバイスはしません。書いたことは応答をつくるためにAIへ送られますが、保存されず、ほかの人に伝わることもありません。
           </p>
+          {crisisQuiet ? <CrisisNotice variant="quiet" /> : null}
           <div className="actions">
             <button
               type="button"
@@ -388,7 +440,13 @@ export function SessionApp() {
               <div ref={reflectEndRef} />
             </div>
 
-            {phase === "reflecting" && (
+            {crisisHold ? (
+              <CrisisNotice variant="hold" onEnd={endSession} />
+            ) : crisisQuiet ? (
+              <CrisisNotice variant="quiet" />
+            ) : null}
+
+            {phase === "reflecting" && !crisisHold && (
               <>
                 <p className="end-hint">
                   {reflectRound > 1
@@ -474,14 +532,14 @@ export function SessionApp() {
               </>
             )}
 
-            {phase === "stage" && !showPauseOffer && (
+            {phase === "stage" && !crisisHold && !showPauseOffer && (
               <p className="boundary-note">
                 ステージが開いているあいだ、Reflective AIは発言しません。
                 およそ4往復、またはしばらく沈黙が続いたタイミングで、少し離れて返してもらう提案が出ます。
               </p>
             )}
 
-            {phase === "stage" && showPauseOffer && (
+            {phase === "stage" && !crisisHold && showPauseOffer && (
               <div className="pause-offer">
                 <p className="pause-offer-title">
                   今のやり取りを、少し離れたところから返してもらいませんか
@@ -523,7 +581,7 @@ export function SessionApp() {
                   <span>自分</span>
                 </span>
               </div>
-              {phase === "stage" && (
+              {phase === "stage" && !crisisHold && (
                 <button
                   type="button"
                   className="btn ghost compact"
@@ -582,7 +640,7 @@ export function SessionApp() {
               })}
             </div>
 
-            {phase === "stage" && (
+            {phase === "stage" && !crisisHold && (
               <div className="stage-input">
                 <input
                   type="text"
@@ -622,6 +680,7 @@ export function SessionApp() {
             内容は保存されていません。話すことは、手放すことです。
             また書きたくなったら、いつでも来てください。
           </p>
+          {crisisLevel >= 2 ? <CrisisNotice variant="quiet" /> : null}
           <div className="actions">
             {process.env.NEXT_PUBLIC_SURVEY_URL ? (
               <a

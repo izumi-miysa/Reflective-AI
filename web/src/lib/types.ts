@@ -35,10 +35,14 @@ export type Person = {
   kind: PersonKind;
 };
 
+/** 危険信号の強度。1=平常 / 2=注意 / 3=危険（流れを止める） */
+export type CrisisLevel = 1 | 2 | 3;
+
 export type ReflectResponse = {
   /** 書かれた内容から聞こえた人。誰に話すかは本人が選ぶので、ここでは絞らない */
   people: Person[];
   message: string;
+  crisisLevel?: CrisisLevel;
 };
 
 export type StageRequest = {
@@ -50,6 +54,7 @@ export type StageRequest = {
 
 export type StageResponse = {
   message: string;
+  crisisLevel?: CrisisLevel;
 };
 
 export type AiProviderName = "mock" | "anthropic" | "openai";

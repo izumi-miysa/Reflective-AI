@@ -18,7 +18,8 @@ npm install
 npm run dev
 ```
 
-ブラウザで http://localhost:3000 を開きます。
+ブラウザで http://localhost:3010 を開きます。
+（3000 はこのPCの別ツール用。Reflective AI の開発サーバーは 3010 に固定しています。）
 
 ## Claude（Anthropic）接続
 
