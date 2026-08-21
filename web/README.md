@@ -76,3 +76,15 @@ NEXT_PUBLIC_SURVEY_URL=https://forms.gle/xxxxxxxx
 
 4. Deploy  
 5. 発行された URL をスマホで開き、体験 → 終了 → 感想、の流れを確認  
+
+## アクセス数の見方（Web Analytics）
+
+会話の中身は保存しません。開かれた回数（ページビュー）だけ見ます。複雑ではありません。
+
+1. [vercel.com](https://vercel.com) にログイン  
+2. プロジェクト **reflective-ai** を開く  
+3. 左メニュー **Analytics** → 初回だけ **Enable** を押す  
+4. このリポジトリの変更を `main` に push してデプロイが終わったあと、公開URLを一度開く  
+5. 同じ Analytics 画面で、 Visitors / Page Views が増えていればOK  
+
+Hobby プランで月5万イベントまで無料。書いた文や会話はここに出ません。

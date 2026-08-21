@@ -223,7 +223,13 @@ textarea {
 .btn.soft {
   background: var(--reflector-soft);
   color: var(--reflector);
-  border: 1px solid #c9d7e8;
+  border: 1px solid #8aa4c0;
+}
+
+.btn.soft:disabled {
+  opacity: 0.55;
+  color: var(--reflector);
+  border-color: #c9d7e8;
 }
 
 .btn.compact {

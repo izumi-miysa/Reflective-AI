@@ -30,7 +30,10 @@ export function SessionApp() {
   const [error, setError] = useState<string | null>(null);
   const [stageExchanges, setStageExchanges] = useState(0);
   const [showPauseOffer, setShowPauseOffer] = useState(false);
-  const [pauseOfferDismissed, setPauseOfferDismissed] = useState(false);
+  /** この往復数に達したら再提案。断り後は +4 してまた出す */
+  const [offerAfterExchanges, setOfferAfterExchanges] = useState(
+    STAGE_EXCHANGES_BEFORE_OFFER,
+  );
   const [crisisLevel, setCrisisLevel] = useState<CrisisLevel>(1);
 
   const crisisHold = crisisLevel >= 3;
@@ -51,17 +54,16 @@ export function SessionApp() {
     reflectEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [reflectorMessages]);
 
-  // 4往復に達したら提案（断り済み・危険信号で止めているときは出さない）
+  // 指定の往復数に達したら提案（危険信号で止めているときは出さない）
   useEffect(() => {
     if (
       phase === "stage" &&
       !crisisHold &&
-      stageExchanges >= STAGE_EXCHANGES_BEFORE_OFFER &&
-      !pauseOfferDismissed
+      stageExchanges >= offerAfterExchanges
     ) {
       setShowPauseOffer(true);
     }
-  }, [phase, stageExchanges, pauseOfferDismissed, crisisHold]);
+  }, [phase, stageExchanges, offerAfterExchanges, crisisHold]);
 
   // 沈黙が続いたら提案（入力中・応答待ち中・危険信号では出さない）
   useEffect(() => {
@@ -133,7 +135,7 @@ export function SessionApp() {
     setError(null);
     setStageExchanges(0);
     setShowPauseOffer(false);
-    setPauseOfferDismissed(false);
+    setOfferAfterExchanges(STAGE_EXCHANGES_BEFORE_OFFER);
 
     // 相手を変えたら、前の相手とのやり取りは持ち込まない
     if (switched) setStageMessages([]);
@@ -240,7 +242,8 @@ export function SessionApp() {
 
   function dismissPauseOffer() {
     setShowPauseOffer(false);
-    setPauseOfferDismissed(true);
+    // もう少し話す → あと4往復でまた提案（永久に出さない、にしない）
+    setOfferAfterExchanges(stageExchanges + STAGE_EXCHANGES_BEFORE_OFFER);
   }
 
   async function closeStage() {
@@ -291,7 +294,7 @@ export function SessionApp() {
       ]);
       setPhase("reflecting");
       setStageExchanges(0);
-      setPauseOfferDismissed(false);
+      setOfferAfterExchanges(STAGE_EXCHANGES_BEFORE_OFFER);
     } catch {
       setError("リフレクトに失敗しました。");
     } finally {
@@ -325,7 +328,7 @@ export function SessionApp() {
     setReflectRound(0);
     setStageExchanges(0);
     setShowPauseOffer(false);
-    setPauseOfferDismissed(false);
+    setOfferAfterExchanges(STAGE_EXCHANGES_BEFORE_OFFER);
     setCrisisLevel(1);
     setBusy(false);
     setError(null);
@@ -500,7 +503,7 @@ export function SessionApp() {
                       />
                       <button
                         type="button"
-                        className="btn soft compact"
+                        className={`btn compact ${customPerson.trim() ? "primary" : "soft"}`}
                         disabled={!customPerson.trim() || busy}
                         onClick={() => openStage(customPerson.trim())}
                       >
@@ -522,7 +525,7 @@ export function SessionApp() {
                   )}
                   <button
                     type="button"
-                    className={`btn ${candidates.length > 0 ? "ghost" : "primary"}`}
+                    className="btn ghost"
                     disabled={busy}
                     onClick={endSession}
                   >
