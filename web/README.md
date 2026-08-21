@@ -81,10 +81,14 @@ NEXT_PUBLIC_SURVEY_URL=https://forms.gle/xxxxxxxx
 
 会話の中身は保存しません。開かれた回数（ページビュー）だけ見ます。複雑ではありません。
 
+**順番が大事です。** Enable してからデプロイしないと、数字が増えません。
+
 1. [vercel.com](https://vercel.com) にログイン  
 2. プロジェクト **reflective-ai** を開く  
-3. 左メニュー **Analytics** → 初回だけ **Enable** を押す  
-4. このリポジトリの変更を `main` に push してデプロイが終わったあと、公開URLを一度開く  
-5. 同じ Analytics 画面で、 Visitors / Page Views が増えていればOK  
+3. 左メニュー **Analytics** → **Enable**（初回だけ）  
+4. **Deployments** → いちばん上のデプロイの「…」→ **Redeploy**（または `main` へ push）  
+5. デプロイ完了後、公開URLをブラウザで開く（広告ブロックを切ると確実）  
+6. Analytics 画面で Visitors / Page Views を確認（反映に数分〜しばらくかかることがある）  
 
-Hobby プランで月5万イベントまで無料。書いた文や会話はここに出ません。
+Hobby プランで月5万イベントまで無料。書いた文や会話はここに出ません。  
+まだ増えないときは、本番URLで開発者ツール → Network に `/_vercel/insights/` が出ているかを見る。404 なら Enable のあと Redeploy をもう一度。
