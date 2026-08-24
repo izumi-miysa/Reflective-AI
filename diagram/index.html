@@ -1,0 +1,896 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reflective AI — 図解</title>
+  <meta name="description" content="答えを出すこと自体が目的ではない。何に対するもやもやかなのかを、自分で決める場所。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #eef2f4;
+      --bg-accent: #d7e3ec;
+      --ink: #1c2430;
+      --muted: #5b6572;
+      --card: #fbfcfd;
+      --line: #d5dde5;
+      --navy: #1f3a5f;
+      --navy-soft: #e8eef6;
+      --green: #2f6b4f;
+      --green-soft: #e7f3ec;
+      --warn: #8a5a2b;
+      --warn-soft: #f5efe6;
+      --shadow: 0 18px 48px rgba(28, 36, 48, 0.1);
+      --radius: 20px;
+      --font: "IBM Plex Sans JP", "Hiragino Sans", "Yu Gothic UI", sans-serif;
+      --max: 920px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--font);
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at 12% -10%, rgba(47, 107, 79, 0.1), transparent 36%),
+        radial-gradient(circle at 88% 0%, rgba(42, 79, 122, 0.12), transparent 40%),
+        linear-gradient(180deg, #f7fafb 0%, var(--bg) 48%, var(--bg-accent) 100%);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--navy); }
+    .wrap { width: min(var(--max), calc(100% - 40px)); margin: 0 auto; }
+    .eyebrow {
+      display: inline-block;
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    h1, h2, h3 { line-height: 1.35; letter-spacing: -0.02em; }
+    h1 { margin: 0 0 18px; font-size: clamp(28px, 5vw, 40px); color: var(--navy); }
+    h2 { margin: 0 0 14px; font-size: clamp(22px, 3.5vw, 28px); color: var(--navy); }
+    h3 { margin: 0 0 8px; font-size: 17px; }
+    p { margin: 0 0 14px; }
+    .lead { font-size: 17px; color: var(--ink); }
+    .muted { color: var(--muted); font-size: 15px; }
+    .small { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+    header.hero {
+      padding: 56px 0 40px;
+      border-bottom: 1px solid var(--line);
+    }
+    .hero-kicker {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .one-liner {
+      margin: 0 0 22px;
+      padding: 16px 18px;
+      border-left: 4px solid var(--navy);
+      background: rgba(255, 255, 255, 0.65);
+      font-size: clamp(18px, 2.8vw, 22px);
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.55;
+    }
+    .flow-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 22px 0 10px;
+    }
+    .flow-strip span {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid var(--line);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--navy);
+    }
+    .flow-strip .arrow {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      padding: 0;
+      font-weight: 400;
+    }
+    .note-not-cycle {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    section {
+      padding: 52px 0;
+      border-bottom: 1px solid rgba(213, 221, 229, 0.85);
+    }
+    section:last-of-type { border-bottom: none; }
+
+    .step-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: 22px;
+    }
+    @media (max-width: 820px) {
+      .step-row { grid-template-columns: 1fr; }
+    }
+    .step-row article {
+      padding: 12px 12px 14px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+    .step-row b {
+      display: block;
+      margin: 0 0 6px;
+      color: var(--navy);
+      font-size: 13px;
+    }
+    .step-row span {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .phone-screen .pane-chip {
+      display: inline-block;
+      margin: 0 0 10px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--navy-soft);
+      color: var(--navy);
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .phone-screen .pane-bubble {
+      margin: 0 0 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: var(--navy-soft);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .phone-screen .pane-hint,
+    .phone-screen .pane-lead {
+      margin: 0 0 8px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .phone-screen .pane-lead { color: var(--ink); font-weight: 600; }
+    .phone-screen .ghost-btns { margin-top: 8px; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: stretch;
+      margin-top: 22px;
+    }
+    @media (max-width: 820px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    .grid-2 > div {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .grid-2 .phone {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 300px;
+    }
+    .phone-screen .soft-btns { margin-top: auto; }
+
+    .phone {
+      width: min(300px, 100%);
+      margin: 0 auto;
+      padding: 14px 12px 18px;
+      border-radius: 28px;
+      background: #1c2430;
+      box-shadow: var(--shadow);
+    }
+    .phone-bar {
+      height: 10px;
+      margin: 4px auto 12px;
+      width: 64px;
+      border-radius: 999px;
+      background: #3a4554;
+    }
+    .phone-screen {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      border-radius: 18px;
+      background: #f7fafb;
+      padding: 18px 16px 16px;
+      min-height: 0;
+    }
+    .phone-brand {
+      margin: 0 0 14px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: 0.02em;
+    }
+    .phone-screen h4 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      color: var(--navy);
+    }
+    .phone-screen .hint {
+      margin: 0 0 12px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .phone-area {
+      flex: 1;
+      min-height: 120px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      padding: 12px;
+      font-size: 12px;
+      color: #8a94a1;
+      margin-bottom: 10px;
+    }
+    .phone-assurance {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    .phone-btn {
+      display: block;
+      text-align: center;
+      padding: 10px;
+      border-radius: 999px;
+      background: var(--navy);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .side-note {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: var(--navy-soft);
+      border: 1px solid #c9d7e8;
+    }
+    .side-note strong { display: block; margin-bottom: 6px; color: var(--navy); font-size: 14px; }
+    .reflect-mock {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    .soft-btns, .ghost-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+    .ghost-btns { margin-top: 8px; }
+    .soft-btns span {
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: var(--navy-soft);
+      border: 1px solid #8aa4c0;
+      color: var(--navy);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .ghost-btns span {
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .screens {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .screen-row {
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      gap: 12px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+    .screen-row b {
+      color: var(--navy);
+      font-size: 13px;
+    }
+    .screen-row span { font-size: 14px; color: var(--ink); }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 20px 0;
+    }
+    @media (max-width: 700px) {
+      .compare { grid-template-columns: 1fr; }
+    }
+    .compare article {
+      padding: 18px 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+    .compare .before { border-top: 4px solid #9aa6b4; }
+    .compare .after { border-top: 4px solid var(--navy); }
+    .compare .label {
+      margin: 0 0 10px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+    .compare ul { margin: 0; padding-left: 1.1em; }
+    .compare li { margin: 0 0 8px; font-size: 14px; }
+
+    .example {
+      padding: 18px 18px 8px;
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.8);
+      border: 1px solid var(--line);
+      margin: 18px 0;
+    }
+    .example h3 { color: var(--navy); }
+    .quote {
+      position: relative;
+      margin: 10px 0 14px 10px;
+      padding: 12px 16px 12px 14px;
+      border-radius: 16px 16px 16px 6px;
+      background: var(--navy-soft);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+    .quote::before {
+      content: "";
+      position: absolute;
+      left: -8px;
+      bottom: 14px;
+      border-style: solid;
+      border-width: 8px 10px 8px 0;
+      border-color: transparent var(--navy-soft) transparent transparent;
+    }
+    .quote-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 0 0 6px;
+      color: var(--navy);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .quote-label svg {
+      flex: 0 0 auto;
+      display: block;
+    }
+    .quote p {
+      margin: 0;
+    }
+
+    .questions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 18px 0;
+    }
+    @media (max-width: 640px) {
+      .questions { grid-template-columns: 1fr; }
+    }
+    .questions div {
+      padding: 16px;
+      border-radius: 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    .questions .num {
+      display: inline-block;
+      margin-bottom: 8px;
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
+      text-align: center;
+      border-radius: 50%;
+      background: var(--navy);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .theory {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin: 16px 0;
+      background: #fff;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    .theory th, .theory td {
+      text-align: left;
+      vertical-align: top;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+    .theory th {
+      background: var(--navy-soft);
+      color: var(--navy);
+      font-weight: 700;
+    }
+    .theory tbody th {
+      width: 1%;
+      white-space: nowrap;
+    }
+    .theory tr:last-child td { border-bottom: none; }
+    @media (max-width: 700px) {
+      .theory, .theory thead, .theory tbody, .theory th, .theory td, .theory tr { display: block; }
+      .theory th { width: auto; white-space: normal; }
+      .theory td { border-bottom: 1px solid var(--line); }
+    }
+
+    .do-dont {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0;
+    }
+    @media (max-width: 640px) {
+      .do-dont { grid-template-columns: 1fr; }
+    }
+    .do-dont article {
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+    .do-dont .yes { border-top: 4px solid var(--green); }
+    .do-dont .no { border-top: 4px solid #9aa6b4; }
+    .do-dont ul { margin: 8px 0 0; padding-left: 1.1em; font-size: 14px; }
+
+    .stance-list {
+      margin: 16px 0;
+      padding: 0;
+      list-style: none;
+    }
+    .stance-list li {
+      position: relative;
+      margin: 0 0 10px;
+      padding: 12px 14px 12px 42px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      font-size: 14px;
+    }
+    .stance-list li::before {
+      content: attr(data-n);
+      position: absolute;
+      left: 12px;
+      top: 12px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--navy-soft);
+      color: var(--navy);
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      line-height: 22px;
+    }
+
+    .exception {
+      margin-top: 18px;
+      padding: 16px 18px;
+      border-radius: 14px;
+      background: var(--warn-soft);
+      border: 1px solid #e4d4bc;
+    }
+    .exception h3 { color: var(--warn); font-size: 15px; }
+    .exception p { margin-bottom: 8px; font-size: 14px; }
+
+    .reduce {
+      display: grid;
+      gap: 8px;
+      margin: 16px 0;
+    }
+    .reduce div {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px 14px;
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      font-size: 14px;
+    }
+    .reduce b {
+      flex: 0 0 auto;
+      color: var(--navy);
+      font-size: 12px;
+      min-width: 4.5em;
+    }
+
+    .takeaways {
+      counter-reset: take;
+      list-style: none;
+      margin: 18px 0;
+      padding: 0;
+    }
+    .takeaways li {
+      counter-increment: take;
+      margin: 0 0 12px;
+      padding: 16px 16px 16px 64px;
+      position: relative;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+    }
+    .takeaways li::before {
+      content: counter(take, decimal-leading-zero);
+      position: absolute;
+      left: 16px;
+      top: 16px;
+      font-weight: 700;
+      color: var(--navy);
+      font-size: 18px;
+    }
+    .close-line {
+      margin-top: 22px;
+      padding: 18px 20px;
+      border-radius: var(--radius);
+      background: var(--navy);
+      color: #fff;
+      font-size: clamp(16px, 2.4vw, 19px);
+      font-weight: 700;
+      line-height: 1.55;
+    }
+
+    .url-box {
+      margin-top: 18px;
+      padding: 16px 18px;
+      border-radius: 14px;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+    .url-box a {
+      font-weight: 700;
+      font-size: 15px;
+      word-break: break-all;
+    }
+
+    footer {
+      padding: 28px 0 56px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    footer .tip {
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.55);
+      border: 1px solid var(--line);
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <p class="hero-kicker">AI Driven School卒業制作 </p>
+      <p class="eyebrow">1 · 最初にまとめ</p>
+      <h1>Reflective AI</h1>
+      <p class="eyebrow">答えを出すこと自体が目的ではない</p>
+      <p class="one-liner">何に対するもやもやかなのかを、自分で決める場所</p>
+      <div class="flow-strip" aria-label="流れ">
+        <span>書く</span><span class="arrow" aria-hidden="true">→</span>
+        <span>一度返す</span><span class="arrow" aria-hidden="true">→</span>
+        <span>本人が選ぶ</span><span class="arrow" aria-hidden="true">→</span>
+        <span>相手役と話す</span><span class="arrow" aria-hidden="true">→</span>
+        <span>手放す</span>
+      </div>
+      <p class="note-not-cycle">一直線の解決ではない。残して積み上げる循環でもない。</p>
+      <div class="reduce" aria-label="流れと画面の対応">
+        <div><b>リフレクト</b><span>「一度返す」と「本人が選ぶ」は、同じ画面。書いた文から浮かんだ人（聞こえた人）を並べ、誰と話すかを本人が選びます。</span></div>
+        <div><b>ステージ</b><span>選んだ相手役と話す画面。相手役は実在のその人ではありません。AIが、その人の視点から話しそうな声を担います。</span></div>
+        <div><b>手放す</b><span>終わったら消えること。次に開いたとき、内容は残っていません。</span></div>
+      </div>
+    </div>
+  </header>
+
+  <section id="product">
+    <div class="wrap">
+      <p class="eyebrow">2 · 作ったもの</p>
+      <h2>公開している場と、画面の流れ</h2>
+      <p class="muted">アプリの入口には、この図解の筋書きは置きません。入口は場の約束だけです。</p>
+
+      <div class="step-row">
+        <article><b>入口</b><span>答えを出さない、と先に伝える。誘いは「話してみる」。この先の流れは出さない</span></article>
+        <article><b>書く</b><span>AIは無言。うまくまとめなくてよい。ここには保存されない</span></article>
+        <article><b>リフレクト</b><span>書いたことを一度返す。浮かんだ人を並べ、本人が選ぶ</span></article>
+        <article><b>ステージ</b><span>選んだ相手役と話す。4往復か沈黙で、少し離れて返す提案</span></article>
+        <article><b>終了</b><span>内容は保存されていない。話すことは、手放すこと</span></article>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="phone" aria-hidden="true">
+            <div class="phone-bar"></div>
+            <div class="phone-screen">
+              <p class="phone-brand">Reflective AI</p>
+              <h4>今、心にあることを書いてみませんか</h4>
+              <p class="hint">うれしかったことでも、もやもやでも。うまくまとめなくて大丈夫です。</p>
+              <div class="phone-area">浮かんだこと、言えなかったこと、ぼんやりした気持ち…</div>
+              <p class="phone-assurance">判断やアドバイスはしません。書いたことは応答をつくるためにAIへ送られますが、保存されず、ほかの人に伝わることもありません。</p>
+              <div class="phone-btn">書きました</div>
+            </div>
+          </div>
+          <p class="small" style="text-align:center;margin:10px 0 0">左は「書く」画面</p>
+        </div>
+        <div>
+          <div class="phone" aria-hidden="true">
+            <div class="phone-bar"></div>
+            <div class="phone-screen">
+              <p class="phone-brand">Reflective AI</p>
+              <p class="hint">一度返す役（一度だけ話します）</p>
+              <p class="pane-chip">書いたことを見る</p>
+              <p class="pane-bubble">同じ文から、同僚と課長の、両方の声が聞こえます。</p>
+              <p class="pane-hint">今は話さなくても大丈夫です。この会話は保存されません。</p>
+              <p class="pane-lead">ここで、相手を想定して話してみませんか。</p>
+              <div class="soft-btns">
+                <span>同僚と話してみる</span>
+                <span>課長と話してみる</span>
+              </div>
+              <div class="ghost-btns">
+                <span>もう少し続ける</span>
+                <span>今日はここまでにする</span>
+              </div>
+            </div>
+          </div>
+          <p class="small" style="text-align:center;margin:10px 0 0">右は「リフレクト」画面（説明用）</p>
+        </div>
+      </div>
+      <div class="url-box">
+        <p class="small" style="margin:0 0 6px">実際のツール</p>
+        <a href="https://reflective-ai-red.vercel.app" target="_blank" rel="noopener">https://reflective-ai-red.vercel.app</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="contrast">
+    <div class="wrap">
+      <p class="eyebrow">3 · 解決したかった点</p>
+      <h2>社内では言いにくいことを、会社に届かない場所で</h2>
+      <div class="example">
+        <h3>出発点にあった困りごと</h3>
+        <p>仕事の現場で、こんな声を聞いてきました。辞めたい。社内の雰囲気が悪い。コミュニケーションが取れていない。家庭のトラブルで辞めていく人がいる。離職を食い止めたい。外部のカウンセラーに入ってもらいたい。</p>
+        <p style="margin-bottom:0">作ったのは、離職対策や人の代わりではありません。<strong>社内では言いにくいことが、会社に届かない場所で言葉になる</strong>場です。答えも台本も出さない。</p>
+      </div>
+      <p>同じ相談を ChatGPT に投げたときも見ました。ChatGPT は間違えていません。差は、誰が／いつ／何を／どう／誰に、という場の設定を誰が決めるか、です。</p>
+
+      <div class="compare">
+        <article class="before">
+          <p class="label">BEFORE — ChatGPT</p>
+          <ul>
+            <li>起きること：気持ちの相談を、解決すべき課題として受け取る</li>
+            <li>何の話か：AI が先に決める</li>
+            <li>本人側：考えが追い付く前に、出口（こう伝えてください、という答え）が来る</li>
+          </ul>
+        </article>
+        <article class="after">
+          <p class="label">AFTER — Reflective AI</p>
+          <ul>
+            <li>起きること：答えも台本も出さない</li>
+            <li>何の話か：聞こえた人を並べ、本人が選ぶ</li>
+            <li>本人側：場の設定を、本人が決める</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="example">
+        <h3>同じ入力での実例（要約）</h3>
+        <p class="small">ステージ全文や固有名の詳細は出さない。公開の人物は同僚と課長です。</p>
+        <p><strong>入力</strong>　同僚の言葉遣い。私にだけ命令口調。課長の前では少し和らぐ。言い方を変えてほしい。</p>
+        <p><strong>ChatGPT</strong>　共感のあと、こう伝えてください、と台詞と次の作業まで渡す。</p>
+        <div class="quote">
+          <p class="quote-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 6.5A3.5 3.5 0 0 1 8.5 3h7A3.5 3.5 0 0 1 19 6.5v5A3.5 3.5 0 0 1 15.5 15H11l-4.2 3.2c-.7.5-1.8 0-1.8-.8V6.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            </svg>
+            使った人の心の声
+          </p>
+          <p>どんどん提案してくれるけれど、考えが追い付かなくなる…</p>
+        </div>
+        <p><strong>Reflective AI</strong>　同じ文から同僚と課長が聞こえる。並べて、本人が選ぶ。普段言えないことが出た。</p>
+        <div class="quote">
+          <p class="quote-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 6.5A3.5 3.5 0 0 1 8.5 3h7A3.5 3.5 0 0 1 19 6.5v5A3.5 3.5 0 0 1 15.5 15H11l-4.2 3.2c-.7.5-1.8 0-1.8-.8V6.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            </svg>
+            使った人の心の声
+          </p>
+          <p>私、抑圧されていたんだ…、本当にこんなことを言ったら傷つけちゃうな…</p>
+        </div>
+      </div>
+
+      <p class="muted">相談アプリ（書いて分析し、記録が残るもの）とも比較しました。第三者を介して相手に届ける組織の手法や、自分を感じ取ってから人と話す手法も見ました。こちらは、誰にも届けません。Reflective AIは判断せず、残さない。機能が少ないのではなく、思想が逆です。EAP（会社が用意する外部の相談窓口）や産業医の代わりでもありません。</p>
+    </div>
+  </section>
+
+  <section id="why">
+    <div class="wrap">
+      <p class="eyebrow">4 · 作りたかった理由</p>
+      <h2>本人にも、まだ決まっていないことが多い</h2>
+      <p>気持ちの相談では、次のふたつが本人にしかできません。答えないのは優しさではなく、このふたつを本人に残すためです。</p>
+      <div class="questions">
+        <div>
+          <span class="num">1</span>
+          <h3>何に対するもやもやか</h3>
+          <p class="muted" style="margin:0">まだ本人にも決まっていない。答えが出ると、先に決まってしまう</p>
+        </div>
+        <div>
+          <span class="num">2</span>
+          <h3>そのときの自分の気持ち</h3>
+          <p class="muted" style="margin:0">外から見ること。まだ本人にも、言葉になっていないことが多い</p>
+        </div>
+      </div>
+
+      <p><strong>出来事、そこであったことは変わりません。変わるのは見え方です。どの見え方で見るかは、自分で選びます。</strong></p>
+      <p class="small">下の表は、理論の名前を借りて、同じような仕組みの形を説明しています。アプリの効能の根拠にはしません。</p>
+      <table class="theory">
+        <thead>
+          <tr><th>理論</th><th>要点</th><th>このツールでの対応</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>構成的知覚</th>
+            <td>見え方は、外から与えられるのではなく、本人の枠組みで作られる</td>
+            <td>事実は変えない。別の視点を並べ、切り替えるかは本人</td>
+          </tr>
+          <tr>
+            <th>多義図形（ルビンの壺）</th>
+            <td>絵は同じなのに、壺にも顔にも見える。解釈だけが入れ替わる</td>
+            <td>同じ一文から複数の人が聞こえる。何の話かをAIが一つに決めない</td>
+          </tr>
+          <tr>
+            <th>ゲシュタルト</th>
+            <td>ばらばらの点が、一つの絵に見え直す</td>
+            <td>書く＝断片を外に出す。リフレクト（一度返す画面）＝外から見る</td>
+          </tr>
+          <tr>
+            <th>予測処理</th>
+            <td>頭の中の見積もりが更新される。答えは外から入れない</td>
+            <td>診断・結論を渡さない。返して止まる</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="future">
+    <div class="wrap">
+      <p class="eyebrow">5 · この場の向き</p>
+      <h2>手放したあと、また来られる</h2>
+      <p>効能は約束しません。日報のように「まわるほど積み上がる」未来は書きません。残さないのは、できないからではありません。預からない、と決めた設計です。</p>
+      <div class="do-dont">
+        <article class="yes">
+          <h3>書くこと</h3>
+          <ul>
+            <li>終了したら消える。残らないこと自体が、本音を書ける条件</li>
+            <li>また書きたくなったら、いつでも来てください（通知はしない）</li>
+            <li>変化の話をするなら、自分に起きたことだけ</li>
+          </ul>
+        </article>
+        <article class="no">
+          <h3>書かないこと</h3>
+          <ul>
+            <li>成長が積み上がる</li>
+            <li>使い続けるとこうなります</li>
+            <li>仮説を未来として断言すること</li>
+          </ul>
+        </article>
+      </div>
+      <div class="example">
+        <h3>私に起きたこと（効能の約束ではない）</h3>
+        <p>アプリを開いていないときに嫌な声かけを受け、なぜ嫌なのかまで自分で降りていけた。使うほど、AIなしでも自分で気づける方向。それが、この場の向きです。皆さんもこうなる、とは言いません。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="ai">
+    <div class="wrap">
+      <p class="eyebrow">6 · AIの立場</p>
+      <h2>相談相手ではない。返して止まる</h2>
+      <ul class="stance-list">
+        <li data-n="1">答えも台本も出さない</li>
+        <li data-n="2">リフレクター（一度だけ返す役）は、聞いたことを一度だけ返す。対話しない</li>
+        <li data-n="3">相手役は視点を推測して声を担う。本人の代わりにその人になるのではない</li>
+        <li data-n="4">誰と話すかは、AIが決めない</li>
+        <li data-n="5">返す文を書くこと自体は、汎用AI（ChatGPTのように、何にでも答えるAI）にもできる。できないのは、返して止まること</li>
+      </ul>
+
+      <div class="exception">
+        <h3>例外 — 危険信号</h3>
+        <p>結論を出さないのは、自分で決める力が前提だからです。</p>
+        <p>その力が一時的に働きにくいとき（危険なワードが出たとき）だけ、例外にします。</p>
+        <p>例外を担うのはリフレクターではなく、<strong>場</strong>です。画面に差し込む案内（AIの返答ではなく、こちらが用意した文）で、相談窓口を静かに添える／流れを止めて窓口を主にします。電話番号はモデルに書かせません。</p>
+        <p class="small" style="margin:0">あえて入口で伝えることはしません。場が治療の待合室にならないようにするためです。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="reduce">
+    <div class="wrap">
+      <p class="eyebrow">7 · 「しない」を貫く</p>
+      <h2>足すことではなく、減らすこと</h2>
+      <div class="reduce">
+        <div><b>保存しない</b><span>一度終わったら、次に開いたときには残っていない</span></div>
+        <div><b>通知しない</b><span>リマインドを入れない</span></div>
+        <div><b>誘導しない</b><span>候補を「押してほしいボタン」にしない</span></div>
+        <div><b>対話しない</b><span>リフレクターは自ら会話を続けない。「もう少し続ける」は書く画面に戻ること</span></div>
+        <div><b>入口</b><span>筋書きも効能も置かない。場の約束だけ</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="hard">
+    <div class="wrap">
+      <p class="eyebrow">8 · 苦労した点</p>
+      <h2>入れなかったものを守り続けた</h2>
+      <ul>
+        <li>足したくなるもの（分析、記録、通知、AIとの対話、相手の自動決定）を、入れなかった</li>
+        <li>知人に使ってもらったところ、話す相手をAIが一人に決めていた。聞こえた人を並べ、本人が選ぶ形に直した</li>
+        <li>もともとオープンダイアローグ（記録を残して対話を積み重ねるやり方）を知っていて、アプリにできないかと思っていた。現場で聞いた声が後押しになった。ただしそのものにはせず、残らない場のままにした</li>
+      </ul>
+      <p class="muted">迷ったときは、本人が決める作業が残る方を選びました。</p>
+    </div>
+  </section>
+
+  <section id="takeaway">
+    <div class="wrap">
+      <p class="eyebrow">9 · 最後に</p>
+      <h2>この図解で伝えたいこと</h2>
+      <ol class="takeaways">
+        <li>課題は、気持ちの相談で、何の話かをAIが先に決めてしまうこと</li>
+        <li>中心は、書く → 一度返す → 本人が選ぶ → 相手役と話す → 手放す。一直線の解決ではない</li>
+        <li>AIは返して止まる。設計の工夫は、足すことではなく、減らすこと</li>
+      </ol>
+      <p class="close-line">主人公は自分。何の話かも、誰と話すかも、自分が決める。AIは先に答えを出さない。</p>
+      <p class="muted" style="margin-top:18px">いまは個人が、一人で開く場です。将来は、場を用意する側にも届けたい。判断しないという約束は、言葉が変わっても同じです。</p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <p>企業支援を10年、グループでの相談活動を28年してきました。</p>
+      <p>© 2026 Izumi Kawakami－ReflectiveAI</p>
+      <p>Cursor / Claude / Next.js / TypeScript / Vercel。技術の検証に ChatGPT。</p>
+    </div>
+  </footer>
+</body>
+</html>

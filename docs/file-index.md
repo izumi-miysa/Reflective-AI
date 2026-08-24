@@ -14,9 +14,13 @@ Reflective AI 制作用ファイルを探すための目次です。
   Git の名前・メール設定のコツ（このPCで一度だけ）。
 - `docs/demo-survey.md`  
   デモ感想用 Googleフォームの設問案。
+- `docs/crisis-safety.md`  
+  危険信号への対処。実装の正。窓口の差し替え先もここから辿れる。
 
 ## 発表資料
 
+- `diagram/index.html`  
+  評価者・見学者向け図解（日報サイト型の1ページ）。設計の正は `docs/diagram-flow.md`。アプリ入口には置かない。
 - `slides/reflective-ai-for-work-slides.html`  
   発表用HTMLスライド。Reflective AI for Work の概要、入口設計、相手役、言いっぱなし設計、収益モデルを含みます。
 - `docs/presentation-script-1min.md`  
@@ -52,7 +56,7 @@ Reflective AI 制作用ファイルを探すための目次です。
 - `Logs/Discussion-2026-08-06.md`  
   依存、映画館の隣の人、壁打ち、汎用AIとの差分、オープンダイアローグに関するログ。
 - `Logs/Discussion-2026-08-06-2.md`  
-  危険信号、自傷・希死念慮への例外対応、安全設計に関するログ。
+  危険信号の最初の議論（理念と3段階）。実装の正は `docs/crisis-safety.md`。
 - `Logs/Discussion-2026-08-06-4.md`  
   「誰と話したいか」から始める入口設計、言わないと決めたことを言葉にする効能に関するログ。
 - `Logs/Discussion-2026-08-06-5.md`  
@@ -74,3 +78,4 @@ Reflective AI 制作用ファイルを探すための目次です。
 - 企画の全体像を変える: `mockups/reflective-ai-for-work.html`
 - 理念や背景を確認する: `README.md`、`Vision.md（Version 1.0）`、`Founder.md`
 - 議論の根拠を確認する: `Logs/`
+- 危険信号を変える: `docs/crisis-safety.md` と `web/src/lib/crisis/resources.ts`
