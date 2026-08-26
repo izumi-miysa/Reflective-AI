@@ -71,72 +71,81 @@
       position: absolute;
       inset: 0;
       display: none;
-      padding: 40px 56px 72px;
+      padding: 32px 48px 56px;
     }
 
     .slide.active { display: grid; }
 
     .slide-inner {
-      width: min(1180px, 100%);
-      height: min(640px, calc(100vh - 112px));
+      width: min(1680px, 96%);
+      height: min(940px, calc(100vh - 88px));
       margin: auto;
       display: grid;
-      gap: 22px;
+      gap: 28px;
       align-content: center;
     }
 
-    .slide-inner.top { align-content: start; }
+    .slide-inner.top { align-content: stretch; }
+    .slide-inner.top > .grid-2,
+    .slide-inner.top > .grid-3,
+    .slide-inner.top > .compare-table,
+    .slide-inner.top > .cut,
+    .slide-inner.top > .pair {
+      min-height: 0;
+      align-self: stretch;
+    }
     .slide-inner.center {
       place-items: center;
       text-align: center;
     }
 
     .slide.vow-slide {
-      padding: 80px 88px 96px;
+      padding: 48px 72px 72px;
     }
     .slide-inner.vow {
       place-items: center;
       text-align: center;
       align-content: center;
       gap: 0;
-      height: min(680px, calc(100vh - 176px));
+      height: min(900px, calc(100vh - 120px));
     }
-    .slide-inner.vow .kicker { margin-bottom: 56px; }
+    .slide-inner.vow .kicker { margin-bottom: 48px; }
     .vow {
       margin: 0;
-      max-width: 11em;
+      max-width: 12em;
       color: var(--navy);
-      font-size: clamp(36px, 5.2vw, 54px);
-      font-weight: 700;
-      line-height: 1.45;
+      font-size: clamp(48px, 5.6vw, 84px);
+      font-weight: 500;
+      line-height: 1.4;
       letter-spacing: -0.02em;
     }
     .vow-note {
-      margin-top: 64px;
-      font-size: 14px;
+      margin-top: 56px;
+      font-size: 22px;
       color: var(--muted);
       line-height: 1.6;
+      font-weight: 400;
     }
     .whisper {
-      font-size: 13px;
+      font-size: 20px;
       color: var(--muted);
-      font-weight: 500;
+      font-weight: 400;
       letter-spacing: 0.02em;
     }
     .echo {
       margin-top: 28px;
       color: var(--navy);
-      font-size: clamp(15px, 1.8vw, 18px);
-      font-weight: 600;
+      font-size: clamp(22px, 2.4vw, 30px);
+      font-weight: 400;
       line-height: 1.6;
-      opacity: 0.7;
+      opacity: 0.75;
     }
 
     .kicker {
       margin: 0;
       color: var(--muted);
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 18px;
+      font-weight: 500;
       letter-spacing: 0.04em;
       display: inline-flex;
       align-items: center;
@@ -151,59 +160,60 @@
       flex: 0 0 auto;
     }
     .ico {
-      width: 16px;
-      height: 16px;
+      width: 20px;
+      height: 20px;
       flex: 0 0 auto;
       display: block;
     }
     .ico-badge {
       display: grid;
       place-items: center;
-      width: 36px;
-      height: 36px;
-      margin-bottom: 10px;
-      border-radius: 12px;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 12px;
+      border-radius: 14px;
     }
-    .ico-badge .ico { width: 18px; height: 18px; }
+    .ico-badge .ico { width: 24px; height: 24px; }
     .ico-badge.rose { background: var(--rose-soft); color: var(--rose); }
     .ico-badge.lilac { background: var(--lilac-soft); color: var(--lilac); }
     .ico-badge.navy { background: var(--navy-soft); color: var(--navy); }
     .mark {
       display: grid;
       place-items: center;
-      width: 56px;
-      height: 56px;
-      margin: 0 auto 12px;
-      border-radius: 18px;
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 16px;
+      border-radius: 20px;
       background: linear-gradient(135deg, var(--lilac-soft), var(--rose-soft));
       color: var(--navy);
     }
-    .mark .ico { width: 28px; height: 28px; }
+    .mark .ico { width: 36px; height: 36px; }
 
     h1, h2, h3, p { margin: 0; }
-    h1, h2, h3 { line-height: 1.35; letter-spacing: -0.02em; color: var(--navy); }
+    h1, h2, h3 { line-height: 1.35; letter-spacing: -0.02em; color: var(--navy); font-weight: 500; }
 
-    h1 { font-size: clamp(40px, 5.4vw, 56px); font-weight: 700; }
-    h2 { font-size: clamp(28px, 3.4vw, 36px); font-weight: 700; }
-    h2.say { font-size: clamp(28px, 3.8vw, 42px); }
-    h3 { font-size: 18px; font-weight: 700; }
+    h1 { font-size: clamp(52px, 6vw, 88px); }
+    h2 { font-size: clamp(40px, 4.4vw, 64px); }
+    h2.say { font-size: clamp(42px, 4.8vw, 70px); }
+    h3 { font-size: clamp(22px, 2.2vw, 32px); }
 
     .lead {
       color: var(--ink);
-      font-size: clamp(18px, 2.1vw, 22px);
-      line-height: 1.7;
+      font-size: clamp(22px, 2.4vw, 32px);
+      line-height: 1.65;
+      font-weight: 400;
     }
 
     .muted { color: var(--muted); }
-    .small { font-size: 14px; color: var(--muted); line-height: 1.6; }
+    .small { font-size: 20px; color: var(--muted); line-height: 1.6; font-weight: 400; }
 
     .one-liner {
       margin: 0;
       padding: 16px 20px;
       border-left: 4px solid var(--navy);
       background: linear-gradient(90deg, var(--lilac-soft), rgba(255, 255, 255, 0.72));
-      font-size: clamp(20px, 2.6vw, 26px);
-      font-weight: 700;
+      font-size: clamp(26px, 3vw, 40px);
+      font-weight: 500;
       color: var(--navy);
       line-height: 1.5;
     }
@@ -223,8 +233,8 @@
       border-radius: 999px;
       background: #fff;
       border: 1px solid var(--line);
-      font-size: 15px;
-      font-weight: 600;
+      font-size: 22px;
+      font-weight: 500;
       color: var(--navy);
     }
     .flow-strip .tone-rose { background: var(--rose-soft); border-color: #e8d0da; }
@@ -242,8 +252,10 @@
       gap: 0;
     }
 
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; height: 100%; align-items: stretch; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; height: 100%; align-items: stretch; }
+
+    .grid-2.words { height: 100%; }
 
     .card {
       padding: 20px 20px 18px;
@@ -253,13 +265,13 @@
       box-shadow: 0 10px 28px rgba(28, 36, 48, 0.06);
     }
 
-    .card p { margin-top: 8px; color: var(--muted); font-size: 15px; line-height: 1.65; }
+    .card p { margin-top: 8px; color: var(--muted); font-size: 22px; line-height: 1.65; }
     .card .label {
       display: block;
       margin-bottom: 8px;
       color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
+      font-size: 15px;
+      font-weight: 500;
       letter-spacing: 0.04em;
     }
 
@@ -282,8 +294,8 @@
       border-radius: 999px;
       border: 1px solid var(--line);
       color: var(--navy);
-      font-size: 14px;
-      font-weight: 500;
+      font-size: 22px;
+      font-weight: 400;
     }
     .voices span:nth-child(3n+1) { background: var(--rose-soft); border-color: #e8d0da; }
     .voices span:nth-child(3n+2) { background: var(--lilac-soft); border-color: #d4cce0; }
@@ -296,21 +308,22 @@
       border: 1px solid var(--line);
       border-radius: var(--radius);
       overflow: hidden;
-      font-size: 16px;
+      font-size: 28px;
+      height: 100%;
     }
 
     .compare-table th,
     .compare-table td {
       text-align: left;
-      vertical-align: top;
-      padding: 14px 16px;
+      vertical-align: middle;
+      padding: 22px 24px;
       border-bottom: 1px solid var(--line);
       line-height: 1.55;
     }
 
     .compare-table thead th {
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 20px;
+      font-weight: 500;
       letter-spacing: 0.04em;
     }
 
@@ -327,8 +340,8 @@
     .compare-table tbody th {
       width: 18%;
       color: var(--navy);
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 20px;
+      font-weight: 500;
       background: rgba(255, 255, 255, 0.7);
       white-space: nowrap;
     }
@@ -339,11 +352,11 @@
     .compare-table tr:last-child td { border-bottom: none; }
 
     .input-box {
-      padding: 14px 18px;
+      padding: 16px 22px;
       border-radius: 14px;
       background: #fff;
       border: 1px solid var(--line);
-      font-size: 16px;
+      font-size: 24px;
       line-height: 1.6;
     }
 
@@ -351,8 +364,8 @@
       display: block;
       margin-bottom: 6px;
       color: var(--muted);
-      font-size: 12px;
-      font-weight: 700;
+      font-size: 15px;
+      font-weight: 500;
       letter-spacing: 0.04em;
     }
 
@@ -362,21 +375,21 @@
 
     .quote {
       margin-top: 12px;
-      padding: 12px 14px;
+      padding: 14px 18px;
       border-radius: 16px 16px 16px 6px;
       background: var(--rose-soft);
-      font-size: 15px;
+      font-size: 22px;
       line-height: 1.65;
       color: var(--navy);
-      font-weight: 600;
+      font-weight: 400;
     }
 
     .quote .who {
       display: block;
       margin-bottom: 4px;
       color: var(--rose);
-      font-size: 11px;
-      font-weight: 700;
+      font-size: 14px;
+      font-weight: 500;
       letter-spacing: 0.04em;
     }
 
@@ -392,8 +405,8 @@
 
     .compare-col .label {
       margin: 0 0 10px;
-      font-size: 12px;
-      font-weight: 700;
+      font-size: 16px;
+      font-weight: 500;
       letter-spacing: 0.04em;
       color: var(--muted);
     }
@@ -401,7 +414,7 @@
     .compare-col ul {
       margin: 0;
       padding-left: 1.1em;
-      font-size: 15px;
+      font-size: 22px;
       color: var(--ink);
     }
 
@@ -430,8 +443,8 @@
     }
 
     .url-card a {
-      font-weight: 700;
-      font-size: 15px;
+      font-weight: 500;
+      font-size: 22px;
       word-break: break-all;
       text-decoration: none;
     }
@@ -439,41 +452,43 @@
     .url-card a:hover { text-decoration: underline; }
 
     .thanks {
-      font-size: clamp(22px, 3vw, 28px);
-      font-weight: 700;
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 500;
       color: var(--navy);
       line-height: 1.5;
     }
 
-    .words .card { text-align: center; padding: 28px 16px; }
-    .words h3 { font-size: clamp(20px, 2.5vw, 26px); }
+    .words .card { text-align: center; padding: 36px 20px; height: 100%; display: grid; align-content: center; }
+    .words h3 { font-size: clamp(28px, 3.2vw, 40px); }
     .pair .card {
-      min-height: 168px;
+      min-height: 200px;
+      height: 100%;
       display: grid;
       align-content: center;
       text-align: center;
       gap: 8px;
     }
-    .pair h3 { font-size: clamp(22px, 3vw, 30px); }
+    .pair h3 { font-size: clamp(32px, 3.6vw, 44px); }
     .cut {
       display: grid;
       grid-template-columns: 1fr auto 1fr;
       gap: 16px;
       align-items: stretch;
+      height: 100%;
     }
     .cut .arrow {
       display: grid;
       place-items: center;
       color: var(--muted);
-      font-size: 28px;
+      font-size: 36px;
     }
-    .flow-strip.big span { font-size: 17px; padding: 12px 18px; }
-    .flow-strip.big .ico { width: 22px; height: 22px; }
+    .flow-strip.big span { font-size: 26px; padding: 14px 22px; }
+    .flow-strip.big .ico { width: 28px; height: 28px; }
     .name {
       margin-top: 8px;
       color: var(--muted);
-      font-size: 18px;
-      font-weight: 600;
+      font-size: 28px;
+      font-weight: 400;
     }
     .words .ico-badge,
     .pair .ico-badge {
@@ -481,11 +496,11 @@
     }
     .cut .ico-badge { margin-bottom: 10px; }
     .vow-slide .mark {
-      width: 72px;
-      height: 72px;
+      width: 88px;
+      height: 88px;
       margin-bottom: 28px;
     }
-    .vow-slide .mark .ico { width: 36px; height: 36px; }
+    .vow-slide .mark .ico { width: 44px; height: 44px; }
     .slide.active .mark,
     .slide.active .ico-badge {
       animation: pop-in 0.45s ease;
@@ -835,7 +850,7 @@
           <p class="kicker">私に起きたこと</p>
           <h2 class="say">なぜ強い言葉が嫌なのかまで、降りていけた</h2>
         </div>
-        <p class="quote" style="font-size:18px;padding:18px 20px;">以前なら「嫌だな」で終わっていた。次の一手まで、自分で組み立てられた。</p>
+        <p class="quote">以前なら「嫌だな」で終わっていた。次の一手まで、自分で組み立てられた。</p>
         <p class="whisper">使うほど、AIなしでも自分で気づけた</p>
         <p class="small">効能の約束ではない。自分の経験です。</p>
       </div>
@@ -860,7 +875,7 @@
               <div class="ico-badge rose" aria-hidden="true">
                 <svg class="ico" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z" stroke="currentColor" stroke-width="1.8"/></svg>
               </div>
-              <p class="label" style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:0.04em;color:var(--muted)">動くデモ</p>
+              <p class="label" style="margin:0 0 6px;font-size:16px;font-weight:500;letter-spacing:0.04em;color:var(--muted)">動くデモ</p>
               <a href="https://reflective-ai-red.vercel.app" target="_blank" rel="noopener">reflective-ai-red.vercel.app</a>
             </div>
           </div>
@@ -875,7 +890,7 @@
               <div class="ico-badge lilac" aria-hidden="true">
                 <svg class="ico" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
               </div>
-              <p class="label" style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:0.04em;color:var(--muted)">説明用図解</p>
+              <p class="label" style="margin:0 0 6px;font-size:16px;font-weight:500;letter-spacing:0.04em;color:var(--muted)">説明用図解</p>
               <a href="https://diagram-reflective-ai.surge.sh" target="_blank" rel="noopener">diagram-reflective-ai.surge.sh</a>
             </div>
           </div>
@@ -893,7 +908,7 @@
         <p class="thanks">答えを出さないを、<br>動くものに作り上げました。</p>
         <p class="echo">「ここは、答えを出さない場所です」</p>
         <p class="lead muted" style="max-width:28em">6か月前には、イメージもできなかったものが、形になった。</p>
-        <p class="lead" style="font-weight:700;color:var(--navy)">falcon のみなさん、マコさん、ありがとうございました。</p>
+        <p class="lead" style="font-weight:500;color:var(--navy)">falcon のみなさん、マコさん、ありがとうございました。</p>
       </div>
     </section>
 
