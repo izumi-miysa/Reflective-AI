@@ -32,6 +32,8 @@
 2. 知人テスト継続。感想は更新済みフォームへ
 3. 図解の文言を直したら、commit のうえ `npx surge diagram --domain diagram-reflective-ai.surge.sh` で再公開
 
+あとから: Cursor で `/claude-reviewer` （定義 `.cursor/agents/claude-reviewer.md`）
+
 参照: @HANDOFF.md @docs/presentation-slides-handoff.md @docs/presentation-script-6min-v3.md @diagram/index.html @docs/diagram-flow.md @docs/demo-survey.md
 図解スキル: C:\Users\kK35777\src\creating-visual-explainers\.claude\skills\creating-visual-explainers\SKILL.md （次チャットで図解に進むとき、最初にこの SKILL を読む）
 ```
@@ -78,7 +80,23 @@
 | `docs/presentation-script-6min-v3.md` | 6分発表の現行読み上げ（本人再考・保存の重複を削った版） |
 | `docs/presentation-script-6min-v2.md` | 6分発表の前版 |
 | `mockups/` / `slides/` | 発表・説明用の静的資料 |
+| `pdf/` | スライド・図解の PDF と、見出し版 PPT（`slides-reflective-ai-v2.pptx`） |
+| `.cursor/agents/claude-reviewer.md` | Cursor で `/claude-reviewer` と打つと Claude が資料をレビューする |
 | `.env.local`（`web/`内・Git対象外） | 秘密情報。GitHubに上げない |
+
+---
+
+## あとから試す: Claude サブエージェント
+
+時間ができたとき、Cursor の Agent チャット入力欄にこう書く。
+
+```text
+/claude-reviewer 見出し版スライドを、原稿 v3 と見比べて
+```
+
+定義ファイル: `.cursor/agents/claude-reviewer.md`  
+公式: https://cursor.com/docs/subagents  
+（Claude Code の `claude` コマンドとは別。これは Cursor 内の Claude モデル）
 
 ### 文書の使い分け（全部を同時に正にしない）
 

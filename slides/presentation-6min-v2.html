@@ -7,9 +7,9 @@
   <meta name="description" content="答えを出さないAI。何に対するもやもやかなのかを、自分で決める場所。">
   <!--
     見出し版（既存 presentation-6min.html / slides-reflective-ai.surge.sh とは別）
-    ① フック → 1／② 結論 → 2／流れ → 3／③ 出発点 → 4／対比 → 5／同僚 → 6
-    ④ 残らない → 7／記憶を切った → 8／⑤ 歯のメンテナンス → 9／私に起きたこと → 10
-    ⑥ 作り・公開 → 11／⑦ 最後 → 12
+    ① フック → 1／② 結論 → 2／場の約束 → 3／流れ → 4／③ 出発点 → 5／対比 → 6／同僚 → 7
+    ④ 残らない → 8／記憶を切った → 9／⑤ 歯のメンテナンス → 10／私に起きたこと → 11
+    ⑥ 作り・公開 → 12／⑦ 最後 → 13
     操作: ← → / Space / Home / End / F 全画面
   -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -89,6 +89,47 @@
     .slide-inner.center {
       place-items: center;
       text-align: center;
+    }
+
+    .slide.vow-slide {
+      padding: 80px 88px 96px;
+    }
+    .slide-inner.vow {
+      place-items: center;
+      text-align: center;
+      align-content: center;
+      gap: 0;
+      height: min(680px, calc(100vh - 176px));
+    }
+    .slide-inner.vow .kicker { margin-bottom: 56px; }
+    .vow {
+      margin: 0;
+      max-width: 11em;
+      color: var(--navy);
+      font-size: clamp(36px, 5.2vw, 54px);
+      font-weight: 700;
+      line-height: 1.45;
+      letter-spacing: -0.02em;
+    }
+    .vow-note {
+      margin-top: 64px;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .whisper {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .echo {
+      margin-top: 28px;
+      color: var(--navy);
+      font-size: clamp(15px, 1.8vw, 18px);
+      font-weight: 600;
+      line-height: 1.6;
+      opacity: 0.7;
     }
 
     .kicker {
@@ -427,11 +468,35 @@
       font-size: 28px;
     }
     .flow-strip.big span { font-size: 17px; padding: 12px 18px; }
+    .flow-strip.big .ico { width: 22px; height: 22px; }
     .name {
       margin-top: 8px;
       color: var(--muted);
       font-size: 18px;
       font-weight: 600;
+    }
+    .words .ico-badge,
+    .pair .ico-badge {
+      margin: 0 auto 12px;
+    }
+    .cut .ico-badge { margin-bottom: 10px; }
+    .vow-slide .mark {
+      width: 72px;
+      height: 72px;
+      margin-bottom: 28px;
+    }
+    .vow-slide .mark .ico { width: 36px; height: 36px; }
+    .slide.active .mark,
+    .slide.active .ico-badge {
+      animation: pop-in 0.45s ease;
+    }
+    @keyframes pop-in {
+      from { transform: scale(0.82); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .slide.active .mark,
+      .slide.active .ico-badge { animation: none; }
     }
 
     .footer {
@@ -496,10 +561,13 @@
         min-height: 100vh;
       }
       .slide.active { display: block; }
+      .slide.vow-slide { padding: 48px 24px 96px; }
       .slide-inner, .grid-2, .grid-3, .url-card, .cut, .words, .pair {
         grid-template-columns: 1fr;
         height: auto;
       }
+      .slide-inner.vow .kicker { margin-bottom: 40px; }
+      .vow-note { margin-top: 40px; }
       .cut .arrow { transform: rotate(90deg); }
       .url-card { justify-items: start; }
     }
@@ -510,6 +578,9 @@
     <!-- 1 · ① フック -->
     <section class="slide active" data-script="①">
       <div class="slide-inner center">
+        <div class="mark" aria-hidden="true">
+          <svg class="ico" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/></svg>
+        </div>
         <p class="kicker">AI Driven School 卒業制作</p>
         <h1>ChatGPTとは別の場所を、作った</h1>
         <p class="name">Reflective AI</p>
@@ -524,14 +595,41 @@
           <h2 class="say">答えを出さない。自分で決める場所。</h2>
         </div>
         <div class="grid-3 words">
-          <div class="card tint-rose"><h3>答えを出さない</h3></div>
-          <div class="card tint-lilac"><h3>自分で決める</h3></div>
-          <div class="card tint-navy"><h3>届かず、残らない</h3></div>
+          <div class="card tint-rose">
+            <div class="ico-badge rose" aria-hidden="true">
+              <svg class="ico" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M10 15V9M14 15V9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <h3>答えを出さない</h3>
+          </div>
+          <div class="card tint-lilac">
+            <div class="ico-badge lilac" aria-hidden="true">
+              <svg class="ico" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="m16.2 7.8-2.1 6.3-6.3 2.1 2.1-6.3 6.3-2.1Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            </div>
+            <h3>自分で決める</h3>
+          </div>
+          <div class="card tint-navy">
+            <div class="ico-badge navy" aria-hidden="true">
+              <svg class="ico" viewBox="0 0 24 24" fill="none"><path d="M17.7 7.7A2.5 2.5 0 1 1 19.5 12H2M9.6 4.6A2 2 0 1 1 11 8H2M12.6 19.4A2 2 0 1 0 14 16H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <h3>届かず、残らない</h3>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- 3 · 流れ -->
+    <!-- 3 · 場の約束 -->
+    <section class="slide vow-slide" data-script="④入口">
+      <div class="slide-inner vow">
+        <div class="mark" aria-hidden="true">
+          <svg class="ico" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </div>
+        <p class="kicker">開くと、まずこう出ます</p>
+        <p class="vow">ここは、答えを出さない場所です</p>
+        <p class="vow-note">効能の約束ではない。場の約束です。</p>
+      </div>
+    </section>
+
+    <!-- 4 · 流れ -->
     <section class="slide" data-script="②流れ">
       <div class="slide-inner top">
         <div>
@@ -564,12 +662,12 @@
       </div>
     </section>
 
-    <!-- 4 · ③ 出発点 -->
+    <!-- 5 · ③ 出発点 -->
     <section class="slide" data-script="③前半">
       <div class="slide-inner top">
         <div>
           <p class="kicker">出発点</p>
-          <h2 class="say">人の代わりではない。離職対策でもない。</h2>
+          <h2 class="say">社内では言いにくいことを、会社に届かない場所で</h2>
         </div>
         <div class="voices" aria-label="聞いた声">
           <span>辞めたい</span>
@@ -582,7 +680,7 @@
       </div>
     </section>
 
-    <!-- 5 · ③ 対比 -->
+    <!-- 6 · ③ 対比 -->
     <section class="slide" data-script="③対比">
       <div class="slide-inner top">
         <div>
@@ -618,7 +716,7 @@
       </div>
     </section>
 
-    <!-- 6 · ③ 同僚 -->
+    <!-- 7 · ③ 同僚 -->
     <section class="slide" data-script="③実例">
       <div class="slide-inner top">
         <div>
@@ -650,7 +748,7 @@
       </div>
     </section>
 
-    <!-- 7 · ④ 残らない -->
+    <!-- 8 · ④ 残らない -->
     <section class="slide" data-script="④残らない">
       <div class="slide-inner top">
         <div>
@@ -658,13 +756,23 @@
           <h2 class="say">残らないこと自体が、本音を書ける条件</h2>
         </div>
         <div class="grid-2 words">
-          <div class="card tint-rose"><h3>終了したら消える</h3></div>
-          <div class="card tint-navy"><h3>通知も、リマインドもない</h3></div>
+          <div class="card tint-rose">
+            <div class="ico-badge rose" aria-hidden="true">
+              <svg class="ico" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <h3>終了したら消える</h3>
+          </div>
+          <div class="card tint-navy">
+            <div class="ico-badge navy" aria-hidden="true">
+              <svg class="ico" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v4l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <h3>通知も、リマインドもない</h3>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- 8 · ④ 記憶を切った -->
+    <!-- 9 · ④ 記憶を切った -->
     <section class="slide" data-script="④記憶">
       <div class="slide-inner top">
         <div>
@@ -672,14 +780,26 @@
           <h2 class="say">できないから残さないのではない。残さないと決めた。</h2>
         </div>
         <div class="cut">
-          <div class="card tint-lilac"><span class="label">学んだこと</span><h3>画面に、記憶を持たせる</h3></div>
+          <div class="card tint-lilac">
+            <div class="ico-badge lilac" aria-hidden="true">
+              <svg class="ico" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v4l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <span class="label">学んだこと</span>
+            <h3>画面に、記憶を持たせる</h3>
+          </div>
           <div class="arrow" aria-hidden="true">→</div>
-          <div class="card tint-rose"><span class="label">決めたこと</span><h3>残さない、と切った</h3></div>
+          <div class="card tint-rose">
+            <div class="ico-badge rose" aria-hidden="true">
+              <svg class="ico" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <span class="label">決めたこと</span>
+            <h3>残さない、と切った</h3>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- 9 · ⑤ たとえ -->
+    <!-- 10 · ⑤ たとえ -->
     <section class="slide" data-script="⑤たとえ">
       <div class="slide-inner top">
         <div>
@@ -688,31 +808,40 @@
         </div>
         <div class="grid-2 pair">
           <div class="card tint-rose">
+            <div class="ico-badge rose" aria-hidden="true">
+              <svg class="ico" viewBox="0 0 24 24" fill="none"><path d="M12 3v10M8 7c0-2 1.8-4 4-4s4 2 4 4c0 3-4 3-4 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="19" r="1.4" fill="currentColor" stroke="none"/></svg>
+            </div>
             <span class="label">Reflective AI</span>
             <h3>歯のメンテナンス</h3>
           </div>
           <div class="card tint-navy">
+            <div class="ico-badge navy" aria-hidden="true">
+              <svg class="ico" viewBox="0 0 24 24" fill="none"><path d="M16 3.5c2.5 1.4 4 4 4 8.5s-1.5 7.1-4 8.5M8 3.5C5.5 4.9 4 7.5 4 12s1.5 7.1 4 8.5M14 8l-4 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
             <span class="label">専門家</span>
             <h3>歯科治療</h3>
           </div>
         </div>
-        <p class="small">前段階、ではない。目的も頻度も違うものです。</p>
       </div>
     </section>
 
-    <!-- 10 · ⑤ 私に起きたこと -->
+    <!-- 11 · ⑤ 私に起きたこと -->
     <section class="slide" data-script="⑤経験">
       <div class="slide-inner top">
         <div>
+          <div class="ico-badge navy" aria-hidden="true">
+            <svg class="ico" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/></svg>
+          </div>
           <p class="kicker">私に起きたこと</p>
-          <h2 class="say">使うほど、AIなしでも自分で気づける方向</h2>
+          <h2 class="say">なぜ強い言葉が嫌なのかまで、降りていけた</h2>
         </div>
-        <p class="quote" style="font-size:18px;padding:18px 20px;">嫌な声かけを受けたとき、なぜ強い言葉が嫌なのかまで、自分で組み立てられた。</p>
+        <p class="quote" style="font-size:18px;padding:18px 20px;">以前なら「嫌だな」で終わっていた。次の一手まで、自分で組み立てられた。</p>
+        <p class="whisper">使うほど、AIなしでも自分で気づけた</p>
         <p class="small">効能の約束ではない。自分の経験です。</p>
       </div>
     </section>
 
-    <!-- 11 · ⑥ 作り・公開 -->
+    <!-- 12 · ⑥ 作り・公開 -->
     <section class="slide" data-script="⑥">
       <div class="slide-inner top">
         <div>
@@ -728,6 +857,9 @@
               </svg>
             </div>
             <div>
+              <div class="ico-badge rose" aria-hidden="true">
+                <svg class="ico" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20Z" stroke="currentColor" stroke-width="1.8"/></svg>
+              </div>
               <p class="label" style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:0.04em;color:var(--muted)">動くデモ</p>
               <a href="https://reflective-ai-red.vercel.app" target="_blank" rel="noopener">reflective-ai-red.vercel.app</a>
             </div>
@@ -740,6 +872,9 @@
               </svg>
             </div>
             <div>
+              <div class="ico-badge lilac" aria-hidden="true">
+                <svg class="ico" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </div>
               <p class="label" style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:0.04em;color:var(--muted)">説明用図解</p>
               <a href="https://diagram-reflective-ai.surge.sh" target="_blank" rel="noopener">diagram-reflective-ai.surge.sh</a>
             </div>
@@ -748,11 +883,15 @@
       </div>
     </section>
 
-    <!-- 12 · ⑦ 最後 -->
+    <!-- 13 · ⑦ 最後 -->
     <section class="slide" data-script="⑦">
       <div class="slide-inner center">
+        <div class="mark" aria-hidden="true">
+          <svg class="ico" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/></svg>
+        </div>
         <p class="kicker">最後に</p>
         <p class="thanks">答えを出さないを、<br>動くものに作り上げました。</p>
+        <p class="echo">「ここは、答えを出さない場所です」</p>
         <p class="lead muted" style="max-width:28em">6か月前には、イメージもできなかったものが、形になった。</p>
         <p class="lead" style="font-weight:700;color:var(--navy)">falcon のみなさん、マコさん、ありがとうございました。</p>
       </div>
@@ -761,7 +900,7 @@
   </main>
 
   <div class="footer">
-    <div id="counter">1 / 12</div>
+    <div id="counter">1 / 13</div>
     <div class="controls">
       <button type="button" id="btn-prev">← 前へ</button>
       <button type="button" id="btn-next">次へ →</button>

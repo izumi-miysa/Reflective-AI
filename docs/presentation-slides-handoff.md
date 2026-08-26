@@ -111,7 +111,18 @@
 | 版 | ファイル | 公開 |
 |---|---|---|
 | 現行（9枚・原稿要約紙） | `slides/presentation-6min.html` | https://slides-reflective-ai.surge.sh |
-| 見出し版（12枚・指摘反映） | `slides/presentation-6min-v2.html` | https://slides-reflective-ai-v2.surge.sh |
+| 見出し版（13枚・指摘反映） | `slides/presentation-6min-v2.html` | https://slides-reflective-ai-v2.surge.sh |
 | 図解 | `diagram/index.html` | https://diagram-reflective-ai.surge.sh |
+| 見出し版 PDF / PPT | `pdf/slides-reflective-ai-v2.pdf` / `pdf/slides-reflective-ai-v2.pptx` | 手元・GitHub |
 
 たとえは「歯のメンテナンス」（「歯磨き」とは言わない）。スライド・図解・原稿で揃える。
+
+## あとから: Claude でレビューする
+
+Cursor の Agent チャットで:
+
+```text
+/claude-reviewer 見出し版スライドを、原稿 v3 と見比べて
+```
+
+定義: `.cursor/agents/claude-reviewer.md`（手順の本文もこのファイルにある）
