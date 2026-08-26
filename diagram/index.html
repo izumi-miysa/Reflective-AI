@@ -22,6 +22,10 @@
       --green-soft: #e7f3ec;
       --warn: #8a5a2b;
       --warn-soft: #f5efe6;
+      --rose: #a45c78;
+      --rose-soft: #f6e8ee;
+      --lilac: #6a5a8a;
+      --lilac-soft: #eee8f4;
       --shadow: 0 18px 48px rgba(28, 36, 48, 0.1);
       --radius: 20px;
       --font: "IBM Plex Sans JP", "Hiragino Sans", "Yu Gothic UI", sans-serif;
@@ -36,21 +40,39 @@
       font-family: var(--font);
       line-height: 1.75;
       background:
-        radial-gradient(circle at 12% -10%, rgba(47, 107, 79, 0.1), transparent 36%),
-        radial-gradient(circle at 88% 0%, rgba(42, 79, 122, 0.12), transparent 40%),
-        linear-gradient(180deg, #f7fafb 0%, var(--bg) 48%, var(--bg-accent) 100%);
+        radial-gradient(circle at 12% -10%, rgba(47, 107, 79, 0.08), transparent 36%),
+        radial-gradient(circle at 88% 0%, rgba(106, 90, 138, 0.16), transparent 42%),
+        radial-gradient(circle at 6% 100%, rgba(164, 92, 120, 0.14), transparent 40%),
+        linear-gradient(180deg, #f8f6f9 0%, var(--bg) 48%, #e6dde8 100%);
       -webkit-font-smoothing: antialiased;
     }
 
     a { color: var(--navy); }
     .wrap { width: min(var(--max), calc(100% - 40px)); margin: 0 auto; }
     .eyebrow {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       margin: 0 0 12px;
       color: var(--muted);
       font-size: 13px;
       font-weight: 600;
       letter-spacing: 0.04em;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--rose), var(--lilac));
+      flex: 0 0 auto;
+    }
+    .eyebrow[data-plain]::before { display: none; }
+    .ico {
+      width: 16px;
+      height: 16px;
+      flex: 0 0 auto;
+      display: block;
     }
     h1, h2, h3 { line-height: 1.35; letter-spacing: -0.02em; }
     h1 { margin: 0 0 18px; font-size: clamp(28px, 5vw, 40px); color: var(--navy); }
@@ -75,7 +97,7 @@
       margin: 0 0 22px;
       padding: 16px 18px;
       border-left: 4px solid var(--navy);
-      background: rgba(255, 255, 255, 0.65);
+      background: linear-gradient(90deg, var(--lilac-soft), rgba(255, 255, 255, 0.7));
       font-size: clamp(18px, 2.8vw, 22px);
       font-weight: 700;
       color: var(--navy);
@@ -91,6 +113,7 @@
     .flow-strip span {
       display: inline-flex;
       align-items: center;
+      gap: 6px;
       padding: 8px 12px;
       border-radius: 999px;
       background: #fff;
@@ -99,12 +122,19 @@
       font-weight: 600;
       color: var(--navy);
     }
+    .flow-strip .tone-rose { background: var(--rose-soft); border-color: #e8d0da; }
+    .flow-strip .tone-rose .ico { color: var(--rose); }
+    .flow-strip .tone-lilac { background: var(--lilac-soft); border-color: #d4cce0; }
+    .flow-strip .tone-lilac .ico { color: var(--lilac); }
+    .flow-strip .tone-navy { background: var(--navy-soft); border-color: #c9d7e8; }
+    .flow-strip .tone-navy .ico { color: var(--navy); }
     .flow-strip .arrow {
       border: none;
       background: transparent;
       color: var(--muted);
       padding: 0;
       font-weight: 400;
+      gap: 0;
     }
     .note-not-cycle {
       margin-top: 8px;
@@ -133,6 +163,23 @@
       border: 1px solid var(--line);
       border-radius: 14px;
     }
+    .step-row article .ico {
+      margin-bottom: 8px;
+    }
+    .step-row .tone-rose {
+      background: linear-gradient(180deg, var(--rose-soft), rgba(255,255,255,0.88));
+      border-color: #e8d0da;
+    }
+    .step-row .tone-rose .ico { color: var(--rose); }
+    .step-row .tone-lilac {
+      background: linear-gradient(180deg, var(--lilac-soft), rgba(255,255,255,0.88));
+      border-color: #d4cce0;
+    }
+    .step-row .tone-lilac .ico { color: var(--lilac); }
+    .step-row .tone-navy {
+      background: linear-gradient(180deg, var(--navy-soft), rgba(255,255,255,0.88));
+    }
+    .step-row .tone-navy .ico { color: var(--navy); }
     .step-row b {
       display: block;
       margin: 0 0 6px;
@@ -339,7 +386,10 @@
       background: #fff;
     }
     .compare .before { border-top: 4px solid #9aa6b4; }
-    .compare .after { border-top: 4px solid var(--navy); }
+    .compare .after {
+      border-top: 4px solid var(--lilac);
+      background: linear-gradient(180deg, var(--lilac-soft), #fff);
+    }
     .compare .label {
       margin: 0 0 10px;
       font-size: 12px;
@@ -355,6 +405,7 @@
       border-radius: var(--radius);
       background: rgba(255,255,255,0.8);
       border: 1px solid var(--line);
+      border-left: 4px solid var(--rose);
       margin: 18px 0;
     }
     .example h3 { color: var(--navy); }
@@ -363,7 +414,7 @@
       margin: 10px 0 14px 10px;
       padding: 12px 16px 12px 14px;
       border-radius: 16px 16px 16px 6px;
-      background: var(--navy-soft);
+      background: var(--rose-soft);
       font-size: 14px;
       line-height: 1.65;
     }
@@ -374,14 +425,14 @@
       bottom: 14px;
       border-style: solid;
       border-width: 8px 10px 8px 0;
-      border-color: transparent var(--navy-soft) transparent transparent;
+      border-color: transparent var(--rose-soft) transparent transparent;
     }
     .quote-label {
       display: flex;
       align-items: center;
       gap: 6px;
       margin: 0 0 6px;
-      color: var(--navy);
+      color: var(--rose);
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.04em;
@@ -409,6 +460,12 @@
       background: #fff;
       border: 1px solid var(--line);
     }
+    .questions div:nth-child(1) {
+      background: linear-gradient(180deg, var(--navy-soft), #fff);
+    }
+    .questions div:nth-child(2) {
+      background: linear-gradient(180deg, var(--lilac-soft), #fff);
+    }
     .questions .num {
       display: inline-block;
       margin-bottom: 8px;
@@ -422,6 +479,7 @@
       font-size: 13px;
       font-weight: 700;
     }
+    .questions div:nth-child(2) .num { background: var(--lilac); }
 
     .theory {
       width: 100%;
@@ -560,11 +618,13 @@
       color: var(--navy);
       font-size: 18px;
     }
+    .takeaways li:nth-child(2)::before { color: var(--lilac); }
+    .takeaways li:nth-child(3)::before { color: var(--rose); }
     .close-line {
       margin-top: 22px;
       padding: 18px 20px;
       border-radius: var(--radius);
-      background: var(--navy);
+      background: linear-gradient(135deg, var(--navy) 0%, #3d3558 58%, var(--lilac) 100%);
       color: #fff;
       font-size: clamp(16px, 2.4vw, 19px);
       font-weight: 700;
@@ -605,14 +665,29 @@
       <p class="hero-kicker">AI Driven School卒業制作 </p>
       <p class="eyebrow">1 · 最初にまとめ</p>
       <h1>Reflective AI</h1>
-      <p class="eyebrow">答えを出すこと自体が目的ではない</p>
+      <p class="eyebrow" data-plain>答えを出すこと自体が目的ではない</p>
       <p class="one-liner">何に対するもやもやかなのかを、自分で決める場所</p>
       <div class="flow-strip" aria-label="流れ">
-        <span>書く</span><span class="arrow" aria-hidden="true">→</span>
-        <span>一度返す</span><span class="arrow" aria-hidden="true">→</span>
-        <span>本人が選ぶ</span><span class="arrow" aria-hidden="true">→</span>
-        <span>相手役と話す</span><span class="arrow" aria-hidden="true">→</span>
-        <span>手放す</span>
+        <span class="tone-rose">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          書く
+        </span><span class="arrow" aria-hidden="true">→</span>
+        <span class="tone-lilac">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M21 4v6h-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          一度返す
+        </span><span class="arrow" aria-hidden="true">→</span>
+        <span class="tone-navy">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="1.8"/></svg>
+          本人が選ぶ
+        </span><span class="arrow" aria-hidden="true">→</span>
+        <span class="tone-lilac">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          相手役と話す
+        </span><span class="arrow" aria-hidden="true">→</span>
+        <span class="tone-rose">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M17.7 7.7A2.5 2.5 0 1 1 19.5 12H2M9.6 4.6A2 2 0 1 1 11 8H2M12.6 19.4A2 2 0 1 0 14 16H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          手放す
+        </span>
       </div>
       <p class="note-not-cycle">一直線の解決ではない。残して積み上げる循環でもない。</p>
       <div class="reduce" aria-label="流れと画面の対応">
@@ -630,11 +705,26 @@
       <p class="muted">アプリの入口には、この図解の筋書きは置きません。入口は場の約束だけです。</p>
 
       <div class="step-row">
-        <article><b>入口</b><span>答えを出さない、と先に伝える。誘いは「話してみる」。この先の流れは出さない</span></article>
-        <article><b>書く</b><span>AIは無言。うまくまとめなくてよい。ここには保存されない</span></article>
-        <article><b>リフレクト</b><span>書いたことを一度返す。浮かんだ人を並べ、本人が選ぶ</span></article>
-        <article><b>ステージ</b><span>選んだ相手役と話す。4往復か沈黙で、少し離れて返す提案</span></article>
-        <article><b>終了</b><span>内容は保存されていない。話すことは、手放すこと</span></article>
+        <article class="tone-lilac">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <b>入口</b><span>答えを出さない、と先に伝える。誘いは「話してみる」。この先の流れは出さない</span>
+        </article>
+        <article class="tone-rose">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <b>書く</b><span>AIは無言。うまくまとめなくてよい。ここには保存されない</span>
+        </article>
+        <article class="tone-navy">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M21 4v6h-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <b>リフレクト</b><span>書いたことを一度返す。浮かんだ人を並べ、本人が選ぶ</span>
+        </article>
+        <article class="tone-lilac">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <b>ステージ</b><span>選んだ相手役と話す。4往復か沈黙で、少し離れて返す提案</span>
+        </article>
+        <article class="tone-rose">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M17.7 7.7A2.5 2.5 0 1 1 19.5 12H2M9.6 4.6A2 2 0 1 1 11 8H2M12.6 19.4A2 2 0 1 0 14 16H2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <b>終了</b><span>内容は保存されていない。話すことは、手放すこと</span>
+        </article>
       </div>
 
       <div class="grid-2">
@@ -797,6 +887,7 @@
       <p class="eyebrow">5 · この場の向き</p>
       <h2>手放したあと、また来られる</h2>
       <p>効能は約束しません。日報のように「まわるほど積み上がる」未来は書きません。残さないのは、できないからではありません。預からない、と決めた設計です。</p>
+      <p>カウンセリングの前段階、ではありません。歯のメンテナンスと、歯科治療のように、目的も頻度も違うものです。</p>
       <div class="do-dont">
         <article class="yes">
           <h3>書くこと</h3>

@@ -28,11 +28,11 @@
 - 講座の「自分の困りごと」: 現場で聞いた声（辞めたい／雰囲気／言えない／離職／カウンセラー）が出発点。作るのは離職対策・人の代わりではない。会社に届かない場。図解3冒頭と6分原稿③④に差し込み済み
 
 次にやること:
-1. 発表: 6分原稿を図解に揃えた（`docs/presentation-script-6min-v2.md`）。一度音読して削る。公開実例は図解が同僚＋課長、口頭の山場は夫
+1. **発表スライド**を作る（指示文: `docs/presentation-slides-handoff.md`）。原稿は `docs/presentation-script-6min-v3.md`、見た目は `diagram/index.html` に揃える
 2. 知人テスト継続。感想は更新済みフォームへ
 3. 図解の文言を直したら、commit のうえ `npx surge diagram --domain diagram-reflective-ai.surge.sh` で再公開
 
-参照: @HANDOFF.md @diagram/index.html @docs/diagram-flow.md @docs/demo-survey.md @docs/crisis-safety.md @Logs/Discussion-2026-08-17.md @docs/presentation-script-6min-v2.md @docs/evaluator-why-example.md @docs/Reflective_AI_有用性についての検討_追加版.docx @docs/reflective-ai-意義整理メモ.md
+参照: @HANDOFF.md @docs/presentation-slides-handoff.md @docs/presentation-script-6min-v3.md @diagram/index.html @docs/diagram-flow.md @docs/demo-survey.md
 図解スキル: C:\Users\kK35777\src\creating-visual-explainers\.claude\skills\creating-visual-explainers\SKILL.md （次チャットで図解に進むとき、最初にこの SKILL を読む）
 ```
 
@@ -75,7 +75,8 @@
 | `docs/Reflective_AI_有用性についての検討_追加版.docx` | 有用性の検討（追加版）。発表・図解の材料 |
 | `docs/reflective-ai-意義整理メモ.md` | 意義整理メモ（素材）。Claude版は `reflective-ai-意義整理メモ-Claude.md` |
 | `docs/perception-science-grounding.md` | 知覚理論との対応（図解4。証明ではなくアナロジー） |
-| `docs/presentation-script-6min-v2.md` | 6分発表の現行原稿 |
+| `docs/presentation-script-6min-v3.md` | 6分発表の現行読み上げ（本人再考・保存の重複を削った版） |
+| `docs/presentation-script-6min-v2.md` | 6分発表の前版 |
 | `mockups/` / `slides/` | 発表・説明用の静的資料 |
 | `.env.local`（`web/`内・Git対象外） | 秘密情報。GitHubに上げない |
 
