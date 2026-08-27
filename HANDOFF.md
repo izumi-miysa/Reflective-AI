@@ -8,34 +8,52 @@
 ## 新しいチャットへの貼り付け用（短文）
 
 ```
-【引継ぎ】Reflective AI
+【引継ぎ】Reflective AI（2026-08-27）
 
 リポジトリ: https://github.com/izumi-miysa/Reflective-AI
 公開アプリ: https://reflective-ai-red.vercel.app
-アプリ: web/（Next.js）
-図解: diagram/index.html（評価者・見学者向け。アプリ入口には置かない）
-設計の正: Logs/Discussion-2026-08-08.md（構造）／08-12（Why）／08-14（実装）／08-15（Why実例・誘導）／08-17（入口は場の約束）／docs/crisis-safety.md／docs/diagram-flow.md（図解）
+図解: https://diagram-reflective-ai.surge.sh
+スライド（見出し版・現行の発表用）: https://slides-reflective-ai-v2.surge.sh
+スライド（旧9枚・見比べ用）: https://slides-reflective-ai.surge.sh
+PPT: pdf/slides-reflective-ai-v2.pptx
+原稿の正: docs/presentation-script-6min-v3.md（まだ6分に収まっていない）
 
-いまの状態（2026-08-25）:
-- アプリ修正は main に push 済み: 「もう少し話す」後も4往復ごとに振り返り再提案／「話してみる」と終了のUIバランス／Vercel Web Analytics（ページビューのみ。会話は保存しない）
-- Analytics: Dashboard で Enable 済み・動作確認済み。見方は web/README.md
-- 感想フォーム: 設問を更新済み（また使いたいか／どんな場面か。入口入りやすさ・終わり方は削った）。正は docs/demo-survey.md。Googleフォーム側も反映済み
-- 図解: 見た目（色・フォント・:root の紺系）は維持したまま、構成・文言だけ精査。ヒーローは名前→目的ではない→一言→流れの帯。対比の行は「何の話か」（「対象」は出さない）。3の見出しは「社内では言いにくいことを、会社に届かない場所で」
-- 名称: 「Reflective AI」が他にもある件は、今は変えない。図解にも書かない。将来の検討
-- 図解は commit 済み。公開: https://diagram-reflective-ai.surge.sh 。再公開は `npx surge diagram --domain diagram-reflective-ai.surge.sh`
-- 入口に筋書きを出す案（A）は採用しない（08-17）。批評されたときの返しと、将来のLP／商用説明への転用は準備済み（HANDOFF本文）
-- 課題の「記憶・DB」: できないのではなく、残さない設計。発表に入れる。講座で記憶を学んだうえで切った、と言える
-- 講座の「自分の困りごと」: 現場で聞いた声（辞めたい／雰囲気／言えない／離職／カウンセラー）が出発点。作るのは離職対策・人の代わりではない。会社に届かない場。図解3冒頭と6分原稿③④に差し込み済み
+■ いまの状態
+- 見出し版スライドは 13枚。HTML / PDF / PPT を main に push 済み
+- ソース: slides/presentation-6min-v2.html。色は図解と同じ紺・IBM Plex Sans JP。現行9枚の線画アイコンを流用
+- 16:9向けに文字を大きくし、太字（700）はほぼやめた（500）
+- たとえは「歯のメンテナンス」（「歯磨き」とは言わない）
+- 公開実例は同僚＋課長。家庭の原文はスライドに出さない
+- 効能は約束しない。入口は場の約束「ここは、答えを出さない場所です」
+- Cursor の Claude レビュー定義: .cursor/agents/claude-reviewer.md → チャットで /claude-reviewer
+- demo/ の docx は GitHub に上げない
 
-次にやること:
-1. **発表スライド**を作る（指示文: `docs/presentation-slides-handoff.md`）。原稿は `docs/presentation-script-6min-v3.md`、見た目は `diagram/index.html` に揃える
-2. 知人テスト継続。感想は更新済みフォームへ
-3. 図解の文言を直したら、commit のうえ `npx surge diagram --domain diagram-reflective-ai.surge.sh` で再公開
+■ これからしたいこと（この順）
+1. ChatGPT と Reflective AI の違いを、もう一度探る
+   - ChatGPT が有用なこと
+   - Reflective AI が有用なこと
+   - そのうえで Reflective AI を使う場面
+   材料: 原稿 v3 の③⑤、docs/reflective-ai-意義整理メモ.md、docs/WHY-ja.md、図解3の対比、同僚の実例
+2. Reflective AI を ChatGPT / Gemini / Claude に評価してもらう（公開デモと図解を渡す）
+3. 作り（実装・構成）を Claude Code のサブエージェントに見てもらう
+   - Cursor 内なら /claude-reviewer または「Claude のサブエージェントで作りを見て」
+   - Claude Code 本体はターミナルの `claude`（Cursor の /名前 とは別）
+4. 1〜3の結果を踏まえて、図解・スライド・原稿を書き直す
+5. スライドの見た目を調整して完成（HTML が正。直したら PDF/PPT と Surge も更新）
+6. 6分原稿を完成させる（いまの v3 は丁寧に読むと7〜8分相当。音読して削る）
 
-あとから: Cursor で `/claude-reviewer` （定義 `.cursor/agents/claude-reviewer.md`）
+■ 言い方（変えない）
+- 「ゆっくり」「じっくり」「時間をかけて」は使わない
+- 「相談アプリ」「セルフカウンセリング」「前段階」とは呼ばない
+- 人の代わり、離職対策、カウンセラー代替、とは言わない
+- 効能を約束しない
 
-参照: @HANDOFF.md @docs/presentation-slides-handoff.md @docs/presentation-script-6min-v3.md @diagram/index.html @docs/diagram-flow.md @docs/demo-survey.md
-図解スキル: C:\Users\kK35777\src\creating-visual-explainers\.claude\skills\creating-visual-explainers\SKILL.md （次チャットで図解に進むとき、最初にこの SKILL を読む）
+■ 再公開
+- 図解: npx surge diagram --domain diagram-reflective-ai.surge.sh
+- 見出し版スライド: HTML を index.html にして npx surge … --domain slides-reflective-ai-v2.surge.sh
+- 旧9枚は上書きしない（slides-reflective-ai.surge.sh）
+
+参照: @HANDOFF.md @docs/presentation-script-6min-v3.md @slides/presentation-6min-v2.html @diagram/index.html @docs/diagram-flow.md @docs/reflective-ai-意義整理メモ.md @docs/WHY-ja.md
 ```
 
 
@@ -107,14 +125,25 @@
 | 相手は本人が選ぶ・誘導しない | `Logs/Discussion-2026-08-14.md` / `08-15.md` | 候補を主ボタンにしない |
 | 評価者向け図解 | `docs/diagram-flow.md` ＋ `diagram/index.html` | アプリ入口に載せない |
 | 発表・「AIに相談するのと何が違うか」 | `docs/WHY-ja.md` / `docs/evaluator-why-example.md` / 6分原稿 | アプリ画面。Why は仮説 |
-| 読み上げ原稿 | `docs/presentation-script-6min-v2.md` | アプリの実装ルール |
+| 読み上げ原稿 | `docs/presentation-script-6min-v3.md` | アプリの実装ルール |
 | URL・タブの説明 | `web/src/app/layout.tsx` の description。**変えない** | Why コピーで置き換えない |
 | 感想フォーム | `docs/demo-survey.md` | 入口文言の変更だけでは触らない |
 | 危険信号（自傷・希死） | `docs/crisis-safety.md` | 入口に窓口を置く。番号をモデルに書かせる |
 
 ---
 
-## いまの状態（手で更新する）— 2026-08-24
+## いまの状態（手で更新する）— 2026-08-27
+
+### 発表（push 済み）
+
+- **読み上げの正:** `docs/presentation-script-6min-v3.md`。まだ長い（丁寧に読むと7〜8分）。音読して削るのが残件
+- **スライドの正（見出し版・13枚）:** `slides/presentation-6min-v2.html`  
+  公開 https://slides-reflective-ai-v2.surge.sh  
+  PDF / PPT: `pdf/slides-reflective-ai-v2.pdf` / `pdf/slides-reflective-ai-v2.pptx`
+- **旧9枚（見比べ用・上書きしない）:** `slides/presentation-6min.html` → https://slides-reflective-ai.surge.sh
+- 直近の見た目: 現行9枚と同じ線画アイコン／文字は16:9向けに拡大／太字は多用しない
+- Claude レビュー（Cursor サブエージェント）済み。残っていた論点の一部は反映済み（経験の見出し、前段階を外す、出発点を図解の肯定文に揃える、場の約束の独立スライド）。まだ残っているもの: 対比表の枚が要約紙になりうること、結論の「もやもやか」が落ちていること、流れに対応する口頭が薄いこと、11枚目（公開QR）が見出しと絵で話が二つ、原稿が6分に収まらないこと
+- 再公開（見出し版）: HTML を `index.html` にして `npx surge … --domain slides-reflective-ai-v2.surge.sh`
 
 ### アプリ（push 済み）
 
@@ -149,16 +178,24 @@
 - **図解に書かない:** 「こんなことまで言われたくない」（口頭は6分原稿③）。「人のことも、自分の期待のこともあります」（08-12の見込みの層。公開実例はそこまで示さない）。古いiPhone／会社ネットの注意（`diagram-flow.md` の知人案内に残す）
 - フッター: 経歴（企業支援10年、相談活動28年）／ © 2026 Izumi Kawakami－ReflectiveAI ／ Cursor / Claude / Next.js / TypeScript / Vercel。技術の検証に ChatGPT
 
-### 次にやること
+### 次にやること（2026-08-27 以降）
 
-1. **発表** 6分原稿を図解に揃えた（`docs/presentation-script-6min-v2.md`）。一度音読して削る。図解の実例は同僚＋課長、口頭の山場は夫
-2. 知人テスト継続。感想は更新済みフォームへ（`docs/demo-survey.md`）
-3. 図解の文言を直したら、commit のうえ `npx surge diagram --domain diagram-reflective-ai.surge.sh` で再公開
+発表の中身を固めてから、図解・スライド・原稿を書き直し、見た目と6分尺を完成させる。
+
+1. **ChatGPT が有用なこと／Reflective AI が有用なこと**を並べ、Reflective AI を使う場面をもう一度探る（比較の再探索。いまの対比を前提にしない）
+2. **公開デモと図解を、ChatGPT / Gemini / Claude に渡して評価してもらう**
+3. **作り**を Claude Code のサブエージェントに見てもらう（Cursor なら `/claude-reviewer` または Claude サブエージェント。本体の CLI は `claude`）
+4. 1〜3を踏まえて **図解・スライド・原稿を書き直す**
+5. **スライドの見た目を調整して完成**（正は HTML。直したら PDF/PPT と Surge）
+6. **6分原稿を完成させる**（v3 を音読して削る）
+
+並行してよいもの: 知人テスト継続（`docs/demo-survey.md`）
 
 ### Git の注意（次チャット開始時）
 
-- `main` は図解の commit 分だけ origin より先に進む（push は依頼があるまでしない）
-- **まだ上げないもの:** ほか docs 多数、`demo/`（個人メモは上げない）
+- 発表の HTML / PDF / PPT / 原稿 v3 は **origin/main に push 済み**（2026-08-27）
+- 追加の commit / push は依頼があるまでしない
+- **まだ上げないもの:** `demo/`、知人テスト原文、ほか未追跡の docx 多数
 
 ### 現在のアプリの画面（要約）
 
